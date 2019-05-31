@@ -10,7 +10,7 @@ object Prop {
         properties.load(inputStream)
 
         properties.forEach {
-            map[it.key as String] = it.value as String
+            map[it.key as String] = "${it.value}"
         }
     }
 }
