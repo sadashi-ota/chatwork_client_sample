@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.dsl.BuildType
 import de.mannodermaus.gradle.plugins.junit5.junitPlatform
 
 plugins {
@@ -6,6 +7,8 @@ plugins {
     id("kotlin-android-extensions")
     id("de.mannodermaus.android-junit5")
 }
+
+Prop.loadProperties("$rootDir/properties/secrets.properties")
 
 android {
     compileSdkVersion(Deps.Versions.compileSdk)
@@ -19,9 +22,11 @@ android {
     }
     buildTypes {
         getByName("debug") {
+            setCommonBuildConfig(this)
             isMinifyEnabled = false
         }
         getByName("release") {
+            setCommonBuildConfig(this)
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -46,4 +51,11 @@ android {
 dependencies {
     Deps.libraries.forEach { implementation(it) }
     Deps.testLibraries.forEach { testImplementation(it) }
+}
+
+
+fun setCommonBuildConfig(buildType: BuildType) {
+    buildType.buildConfigField("String", "AUTH_DOMAIN", Prop.map["authDomain"] ?: "")
+    buildType.buildConfigField("String", "API_DOMAIN", Prop.map["apiDomain"] ?: "")
+    buildType.buildConfigField("String", "AUTH_CALLBACK", Prop.map["authCallback"] ?: "")
 }
