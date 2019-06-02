@@ -51,6 +51,7 @@ object Deps {
     }
 
     private const val picasso = "com.squareup.picasso:picasso:2.71828"
+    private const val commonsLang3 = "org.apache.commons:commons-lang3:3.9"
 
     object Spek2 {
         const val dsl = "org.spekframework.spek2:spek-dsl-jvm:${Deps.Versions.spek}"
@@ -76,7 +77,8 @@ object Deps {
         OkHttp.logging,
         Moshi.core,
         Moshi.kotlin,
-        picasso
+        picasso,
+        commonsLang3
     )
 
     val testLibraries = listOf(
