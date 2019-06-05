@@ -58,5 +58,6 @@ fun setCommonBuildConfig(buildType: BuildType) {
     buildType.buildConfigField("String", "LOGIN_URL", "\"${Prop.map["loginUrl"]}\"")
     buildType.buildConfigField("String", "CLIENT_ID", "\"${Prop.map["clientId"]}\"")
     buildType.buildConfigField("String", "API_DOMAIN", "\"${Prop.map["apiDomain"]}\"")
+    buildType.buildConfigField("String", "AUTH_DOMAIN", "\"${Prop.map["authDomain"]}\"")
     buildType.buildConfigField("String", "AUTH_CALLBACK", "\"${Prop.map["authCallback"]}\"")
 }
