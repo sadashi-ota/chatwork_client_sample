@@ -1,6 +1,5 @@
-package com.sadashi.client.chatwork.domain.repository
+package com.sadashi.client.chatwork.domain.auth
 
-import com.sadashi.client.chatwork.domain.vo.AccessToken
 import io.reactivex.Completable
 import io.reactivex.Single
 

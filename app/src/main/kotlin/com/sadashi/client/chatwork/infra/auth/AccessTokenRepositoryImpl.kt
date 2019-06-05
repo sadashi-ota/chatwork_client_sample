@@ -1,7 +1,7 @@
-package com.sadashi.client.chatwork.infra.repository
+package com.sadashi.client.chatwork.infra.auth
 
-import com.sadashi.client.chatwork.domain.repository.AccessTokenRepository
-import com.sadashi.client.chatwork.domain.vo.AccessToken
+import com.sadashi.client.chatwork.domain.auth.AccessTokenRepository
+import com.sadashi.client.chatwork.domain.auth.AccessToken
 import com.sadashi.client.chatwork.infra.datasource.local.AccessTokenLocalStore
 import io.reactivex.Completable
 import io.reactivex.Single
