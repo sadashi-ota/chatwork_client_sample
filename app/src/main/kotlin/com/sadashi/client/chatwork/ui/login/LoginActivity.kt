@@ -2,34 +2,31 @@ package com.sadashi.client.chatwork.ui.login
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Base64
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
-import com.sadashi.client.chatwork.BuildConfig
 import com.sadashi.client.chatwork.R
-import com.sadashi.client.chatwork.utility.RandomStringBuilder
 import kotlinx.android.synthetic.main.activity_login.btnLogin
+import kotlinx.android.synthetic.main.activity_login.progressBar
 import kotlinx.android.synthetic.main.activity_login.rootView
-import java.security.MessageDigest
 
-class LoginActivity : AppCompatActivity() {
-
-    companion object {
-        const val CODE_LENGTH = 64
-        const val LOGIN_URL = "${BuildConfig.LOGIN_URL}?response_type=code&client_id=${BuildConfig.CLIENT_ID}&scope=users.all:read&code_challenge_method=S256&code_challenge="
-    }
+class LoginActivity : AppCompatActivity(), LoginContract.View, LoginTransition {
+    private val presenter: LoginContract.Presentation = LoginPresenter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        presenter.setUp(this, this)
+
         btnLogin.setOnClickListener {
-            moveLoginHtmlPage()
+            presenter.onStartLogin()
         }
 
         intent?.data?.let { uri ->
             Snackbar.make(rootView, "Succeed to Login. $uri", Snackbar.LENGTH_SHORT)
+            presenter.onLoaded(uri)
         }
     }
 
@@ -37,18 +34,31 @@ class LoginActivity : AppCompatActivity() {
         super.onNewIntent(intent)
         intent?.data?.let { uri ->
             Snackbar.make(rootView, "Succeed to Login. $uri", Snackbar.LENGTH_SHORT)
+            presenter.onLoaded(uri)
         }
     }
 
-    private fun moveLoginHtmlPage() {
-        val messageDigest = MessageDigest.getInstance("SHA-256").apply {
-            update(RandomStringBuilder.build(CODE_LENGTH).toByteArray())
-        }
-        val url = LOGIN_URL + Base64.encodeToString(messageDigest.digest(), Base64.NO_PADDING)
+    override fun moveLoginHtmlPage(url: String) {
         val intent = Intent().also {
             it.data = Uri.parse(url)
             it.action = Intent.ACTION_VIEW
         }
         startActivity(intent)
+    }
+
+    override fun showProgress() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    override fun dismissProgress() {
+        progressBar.visibility = View.GONE
+    }
+
+    override fun showErrorDialog(throwable: Throwable) {
+        Snackbar.make(rootView, "Error!!!!!!", Snackbar.LENGTH_LONG).show()
+    }
+
+    override fun navigationBack() {
+        finish()
     }
 }
