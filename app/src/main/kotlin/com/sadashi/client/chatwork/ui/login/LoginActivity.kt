@@ -7,12 +7,13 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.sadashi.client.chatwork.R
+import com.sadashi.client.chatwork.di.LoginModuleInjection
 import kotlinx.android.synthetic.main.activity_login.btnLogin
 import kotlinx.android.synthetic.main.activity_login.progressBar
 import kotlinx.android.synthetic.main.activity_login.rootView
 
 class LoginActivity : AppCompatActivity(), LoginContract.View, LoginTransition {
-    private val presenter: LoginContract.Presentation = LoginPresenter()
+    private val presenter: LoginContract.Presentation = LoginModuleInjection.getPresenter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +26,6 @@ class LoginActivity : AppCompatActivity(), LoginContract.View, LoginTransition {
         }
 
         intent?.data?.let { uri ->
-            Snackbar.make(rootView, "Succeed to Login. $uri", Snackbar.LENGTH_SHORT)
             presenter.onLoaded(uri)
         }
     }
@@ -33,7 +33,6 @@ class LoginActivity : AppCompatActivity(), LoginContract.View, LoginTransition {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent?.data?.let { uri ->
-            Snackbar.make(rootView, "Succeed to Login. $uri", Snackbar.LENGTH_SHORT)
             presenter.onLoaded(uri)
         }
     }
