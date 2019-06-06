@@ -5,6 +5,7 @@ import android.util.Base64
 import android.util.Log
 import com.sadashi.client.chatwork.BuildConfig
 import com.sadashi.client.chatwork.domain.auth.AuthorizeService
+import com.sadashi.client.chatwork.usecase.auth.AuthorizeUseCase
 import com.sadashi.client.chatwork.utility.RandomStringBuilder
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -14,7 +15,7 @@ import io.reactivex.schedulers.Schedulers
 import java.security.MessageDigest
 
 class LoginPresenter(
-    private val service: AuthorizeService,
+    private val useCase: AuthorizeUseCase,
     private val uiScheduler: Scheduler
 ) : LoginContract.Presentation {
 
@@ -51,13 +52,12 @@ class LoginPresenter(
         val code = uri.getQueryParameter("code") ?: return false
 
         Log.d("HOGE", "code : $code")
-        service.execute(code, codeVerifier)
+        useCase.execute(code, codeVerifier)
             .doOnSubscribe {
                 view.showProgress()
             }
             .observeOn(uiScheduler)
             .subscribe({
-                Log.d("HOGE", "token : ${it.value}")
                 view.dismissProgress()
                 loginTransition.navigationBack()
             }, { throwable ->

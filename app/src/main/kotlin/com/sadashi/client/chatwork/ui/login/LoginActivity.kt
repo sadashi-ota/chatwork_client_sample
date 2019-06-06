@@ -13,12 +13,13 @@ import kotlinx.android.synthetic.main.activity_login.progressBar
 import kotlinx.android.synthetic.main.activity_login.rootView
 
 class LoginActivity : AppCompatActivity(), LoginContract.View, LoginTransition {
-    private val presenter: LoginContract.Presentation = LoginModuleInjection.getPresenter()
+    private lateinit var presenter: LoginContract.Presentation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        presenter = LoginModuleInjection(this).getPresenter()
         presenter.setUp(this, this)
 
         btnLogin.setOnClickListener {
