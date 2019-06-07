@@ -20,7 +20,7 @@ import io.reactivex.schedulers.Schedulers
 class LoginModuleInjection(
     private val context: Context
 ) {
-    private fun getAuthApiClient(): AuthApiClient = AuthApiClientFactory.create()
+    private fun getAuthApiClient(): AuthApiClient = ApiModule.getAuthApiClient()
 
     private fun getAccessTokenLocalStore(): AccessTokenLocalStore {
         return AccessTokenLocalStoreImpl(AccessTokenPreference(context))
