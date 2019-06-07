@@ -4,9 +4,8 @@ import android.content.Context
 import com.sadashi.client.chatwork.domain.auth.AccessTokenRepository
 import com.sadashi.client.chatwork.domain.auth.AuthorizeService
 import com.sadashi.client.chatwork.infra.api.AuthApiClient
-import com.sadashi.client.chatwork.infra.api.AuthApiClientFactory
-import com.sadashi.client.chatwork.infra.auth.AccessTokenRepositoryImpl
-import com.sadashi.client.chatwork.infra.auth.AuthorizeServiceImpl
+import com.sadashi.client.chatwork.infra.domain.auth.AccessTokenRepositoryImpl
+import com.sadashi.client.chatwork.infra.domain.auth.AuthorizeServiceImpl
 import com.sadashi.client.chatwork.infra.datasource.local.AccessTokenLocalStore
 import com.sadashi.client.chatwork.infra.datasource.local.impl.AccessTokenLocalStoreImpl
 import com.sadashi.client.chatwork.infra.preference.AccessTokenPreference
