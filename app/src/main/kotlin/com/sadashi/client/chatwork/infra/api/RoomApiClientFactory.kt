@@ -10,10 +10,10 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-object RoomsApiClientFactory {
+object RoomApiClientFactory {
 
-    fun create(): RoomsApiClient {
-        return provideRetrofit().create(RoomsApiClient::class.java)
+    fun create(): RoomApiClient {
+        return provideRetrofit().create(RoomApiClient::class.java)
     }
 
     private fun provideRetrofit(): Retrofit {

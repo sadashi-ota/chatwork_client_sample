@@ -8,7 +8,7 @@ data class RoomResponseJson(
     @Json(name = "last_update_time") val lastUpdateTime: Int,
     @Json(name = "mention_num") val mentionNum: Int,
     @Json(name = "message_num") val messageNum: Int,
-    @Json(name = "mytask_num") val mytaskNum: Int,
+    @Json(name = "mytask_num") val myTaskNum: Int,
     @Json(name = "name") val name: String,
     @Json(name = "role") val role: String,
     @Json(name = "room_id") val roomId: Int,

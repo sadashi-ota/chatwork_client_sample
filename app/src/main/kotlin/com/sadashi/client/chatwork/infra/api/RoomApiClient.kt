@@ -5,7 +5,7 @@ import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Header
 
-interface RoomsApiClient {
+interface RoomApiClient {
 
     @GET("/rooms")
     fun getRooms(
