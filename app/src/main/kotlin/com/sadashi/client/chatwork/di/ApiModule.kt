@@ -1,5 +1,6 @@
 package com.sadashi.client.chatwork.di
 
+import com.sadashi.client.chatwork.domain.auth.AccessTokenRepository
 import com.sadashi.client.chatwork.infra.api.AuthApiClient
 import com.sadashi.client.chatwork.infra.api.AuthApiClientFactory
 import com.sadashi.client.chatwork.infra.api.RoomApiClient
@@ -16,9 +17,9 @@ object ApiModule {
         }
     }
 
-    fun getRoomApiClient(): RoomApiClient {
+    fun getRoomApiClient(accessTokenRepository: AccessTokenRepository): RoomApiClient {
         return roomApiInstance ?: run {
-            RoomApiClientFactory.create().also { roomApiInstance = it }
+            RoomApiClientFactory.create(accessTokenRepository).also { roomApiInstance = it }
         }
     }
 }

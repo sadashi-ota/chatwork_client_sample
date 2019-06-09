@@ -12,7 +12,7 @@ class RoomRepositoryImpl(
     private val ioScheduler: Scheduler
 ) : RoomRepository {
     override fun getRooms(accessToken: AccessToken): Single<List<Room>> {
-        return apiClient.getRooms(token = accessToken.value)
+        return apiClient.getRooms()
             .map { RoomConverter.convertToDomainModelFromList(it) }
             .subscribeOn(ioScheduler)
     }

@@ -7,8 +7,6 @@ import retrofit2.http.Header
 
 interface RoomApiClient {
 
-    @GET("/rooms")
-    fun getRooms(
-        @Header("X-ChatWorkToken") token: String
-    ): Single<List<RoomResponseJson>>
+    @GET("v2/rooms")
+    fun getRooms(): Single<List<RoomResponseJson>>
 }

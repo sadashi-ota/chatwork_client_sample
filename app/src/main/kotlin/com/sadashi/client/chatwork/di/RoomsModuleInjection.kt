@@ -21,19 +21,19 @@ import io.reactivex.schedulers.Schedulers
 class RoomsModuleInjection(
     private val context: Context
 ) {
-    private val roomApiClient: RoomApiClient = ApiModule.getRoomApiClient()
-
     private val accessTokenLocalStore: AccessTokenLocalStore
         get() {
             return AccessTokenLocalStoreImpl(AccessTokenPreference(context))
         }
 
-    private val roomRepository: RoomRepository = RoomRepositoryImpl(roomApiClient, Schedulers.io())
     private val accessTokenRepository: AccessTokenRepository
         get() {
             return AccessTokenRepositoryImpl(accessTokenLocalStore)
         }
 
+    private val roomApiClient: RoomApiClient = ApiModule.getRoomApiClient(accessTokenRepository)
+
+    private val roomRepository: RoomRepository = RoomRepositoryImpl(roomApiClient, Schedulers.io())
     private val getRoomsUseCase: GetRoomsUseCase
         get() {
             return GetRoomsUseCaseImpl(roomRepository, accessTokenRepository)
