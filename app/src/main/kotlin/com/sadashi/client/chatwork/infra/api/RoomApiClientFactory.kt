@@ -1,6 +1,8 @@
 package com.sadashi.client.chatwork.infra.api
 
 import com.sadashi.client.chatwork.BuildConfig
+import com.sadashi.client.chatwork.domain.auth.AccessTokenRepository
+import com.sadashi.client.chatwork.infra.api.interceptor.OAuthHeaderInterceptor
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.Interceptor
@@ -10,16 +12,16 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-object ChatworkApiClientFactory {
+object RoomApiClientFactory {
 
-    fun create(): ChatworkApiClient {
-        return provideRetrofit().create(ChatworkApiClient::class.java)
+    fun create(tokenRepository: AccessTokenRepository): RoomApiClient {
+        return provideRetrofit(tokenRepository).create(RoomApiClient::class.java)
     }
 
-    private fun provideRetrofit(): Retrofit {
+    private fun provideRetrofit(tokenRepository: AccessTokenRepository): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.API_DOMAIN)
-            .client(createClient())
+            .client(createClient(tokenRepository))
             .addConverterFactory(
                 MoshiConverterFactory.create(
                     Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
@@ -29,24 +31,14 @@ object ChatworkApiClientFactory {
             .build()
     }
 
-    private fun createClient(): OkHttpClient {
+    private fun createClient(tokenRepository: AccessTokenRepository): OkHttpClient {
         val okHttpClientBuilder: OkHttpClient.Builder = OkHttpClient.Builder()
         if (BuildConfig.DEBUG) {
             val loggingInterceptor =
                 HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
             okHttpClientBuilder.addInterceptor(loggingInterceptor)
         }
-        okHttpClientBuilder.addInterceptor(Interceptor { chain ->
-            val original = chain.request()
-
-            //header
-            val request = original.newBuilder()
-                .header("Accept", "application/json")
-                .method(original.method(), original.body())
-                .build()
-
-            return@Interceptor chain.proceed(request)
-        })
+        okHttpClientBuilder.addInterceptor(OAuthHeaderInterceptor(tokenRepository))
         return okHttpClientBuilder.build()
     }
 }

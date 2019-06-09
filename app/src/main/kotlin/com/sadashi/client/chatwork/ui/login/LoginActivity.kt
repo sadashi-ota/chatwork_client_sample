@@ -1,5 +1,6 @@
 package com.sadashi.client.chatwork.ui.login
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -13,6 +14,10 @@ import kotlinx.android.synthetic.main.activity_login.progressBar
 import kotlinx.android.synthetic.main.activity_login.rootView
 
 class LoginActivity : AppCompatActivity(), LoginContract.View, LoginTransition {
+    companion object {
+        fun callingIntent(context: Context): Intent = Intent(context, LoginActivity::class.java)
+    }
+
     private lateinit var presenter: LoginContract.Presentation
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +28,7 @@ class LoginActivity : AppCompatActivity(), LoginContract.View, LoginTransition {
         presenter.setUp(this, this)
 
         btnLogin.setOnClickListener {
-            presenter.onStartLogin()
+            presenter.login()
         }
 
         intent?.data?.let { uri ->

@@ -1,4 +1,4 @@
-package com.sadashi.client.chatwork.infra.auth
+package com.sadashi.client.chatwork.infra.domain.auth
 
 import com.sadashi.client.chatwork.domain.auth.AccessTokenRepository
 import com.sadashi.client.chatwork.domain.auth.AccessToken
