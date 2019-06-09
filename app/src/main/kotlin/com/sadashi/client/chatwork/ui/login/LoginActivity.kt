@@ -28,7 +28,7 @@ class LoginActivity : AppCompatActivity(), LoginContract.View, LoginTransition {
         presenter.setUp(this, this)
 
         btnLogin.setOnClickListener {
-            presenter.onStartLogin()
+            presenter.login()
         }
 
         intent?.data?.let { uri ->

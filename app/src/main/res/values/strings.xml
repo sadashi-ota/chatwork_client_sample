@@ -3,4 +3,6 @@
 
     <string name="btn_test">test</string>
     <string name="btn_login">login</string>
+
+    <string name="description_icon">icon</string>
 </resources>

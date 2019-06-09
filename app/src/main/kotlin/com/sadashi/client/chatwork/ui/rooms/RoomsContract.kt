@@ -5,6 +5,7 @@ import com.sadashi.client.chatwork.domain.rooms.Room
 interface RoomsContract {
     interface Presentation {
         fun setUp(view: View, roomsTransition: RoomsTransition)
+        fun terminate()
         fun onStart()
     }
 

@@ -38,7 +38,7 @@ class LoginPresenter(
         this.codeVerifier = RandomStringBuilder.build(CODE_LENGTH)
     }
 
-    override fun onStartLogin() {
+    override fun login() {
         val messageDigest = MessageDigest.getInstance("SHA-256").apply {
             update(codeVerifier.toByteArray())
         }
@@ -48,10 +48,13 @@ class LoginPresenter(
         loginTransition.moveLoginHtmlPage(url)
     }
 
+    override fun logout() {
+        TODO("not implemented")
+    }
+
     override fun onLoaded(uri: Uri): Boolean {
         val code = uri.getQueryParameter("code") ?: return false
 
-        Log.d("HOGE", "code : $code")
         useCase.execute(code, codeVerifier)
             .doOnSubscribe {
                 view.showProgress()

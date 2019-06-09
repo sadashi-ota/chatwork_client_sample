@@ -22,6 +22,10 @@ class RoomsPresenter(
         this.roomsTransition = roomsTransition
     }
 
+    override fun terminate() {
+        disposables.clear()
+    }
+
     override fun onStart() {
         existsAccessTokenUseCase.execute()
             .doOnSubscribe { view.showProgress() }

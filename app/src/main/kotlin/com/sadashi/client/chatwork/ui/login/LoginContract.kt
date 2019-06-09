@@ -5,8 +5,9 @@ import android.net.Uri
 interface LoginContract {
     interface Presentation {
         fun setUp(view: View, loginTransition: LoginTransition)
-        fun onStartLogin()
         fun onLoaded(uri: Uri): Boolean
+        fun login()
+        fun logout()
     }
 
     interface View {
