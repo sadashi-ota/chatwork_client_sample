@@ -1,9 +1,8 @@
 package com.sadashi.client.chatwork.infra.domain.auth
 
-import com.sadashi.client.chatwork.domain.auth.AccessToken
 import com.sadashi.client.chatwork.domain.auth.AuthorizeService
+import com.sadashi.client.chatwork.domain.auth.AuthorizedToken
 import com.sadashi.client.chatwork.domain.auth.CodeVerifier
-import com.sadashi.client.chatwork.domain.auth.RefreshToken
 import com.sadashi.client.chatwork.infra.api.AuthApiClient
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -16,9 +15,9 @@ class AuthorizeServiceImpl(
     override fun execute(
         code: String,
         codeVerifier: CodeVerifier
-    ): Single<Pair<AccessToken, RefreshToken>> {
-        return apiClient.getAccessToken(code = code, codeVerifier = codeVerifier.value)
-            .map { AccessTokenConverter.convertToDomainModel(it) }
+    ): Single<AuthorizedToken> {
+        return apiClient.getToken(code = code, codeVerifier = codeVerifier.value)
+            .map { AuthorizedTokenConverter.convertToDomainModel(it) }
             .subscribeOn(ioScheduler)
     }
 }

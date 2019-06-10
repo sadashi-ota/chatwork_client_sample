@@ -9,7 +9,7 @@ object RoomConverter {
         return list.map { convertToDomainModel(it) }
     }
 
-    fun convertToDomainModel(json: RoomResponseJson): Room {
+    private fun convertToDomainModel(json: RoomResponseJson): Room {
         return Room(
             id = RoomId(json.roomId),
             name = json.name,
