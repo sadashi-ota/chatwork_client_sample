@@ -17,4 +17,12 @@ interface AuthApiClient {
         @Field("code") code: String,
         @Field("code_verifier") codeVerifier: String
     ): Single<AccessTokenResponseJson>
+
+    @FormUrlEncoded
+    @POST("token")
+    fun refreshToken(
+        @Field("grant_type") grantType: String = "refresh_token",
+        @Field("client_id") clientId: String = BuildConfig.CLIENT_ID,
+        @Field("refresh_token") refreshToken: String
+    ): Single<AccessTokenResponseJson>
 }
