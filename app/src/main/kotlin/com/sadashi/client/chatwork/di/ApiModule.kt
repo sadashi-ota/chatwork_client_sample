@@ -1,10 +1,10 @@
 package com.sadashi.client.chatwork.di
 
-import com.sadashi.client.chatwork.domain.auth.AuthorizedTokenRepository
 import com.sadashi.client.chatwork.infra.api.AuthApiClient
 import com.sadashi.client.chatwork.infra.api.AuthApiClientFactory
 import com.sadashi.client.chatwork.infra.api.RoomApiClient
 import com.sadashi.client.chatwork.infra.api.RoomApiClientFactory
+import com.sadashi.client.chatwork.infra.datasource.local.AuthorizedTokenLocalStore
 
 object ApiModule {
 
@@ -17,9 +17,9 @@ object ApiModule {
         }
     }
 
-    fun getRoomApiClient(authorizedTokenRepository: AuthorizedTokenRepository): RoomApiClient {
+    fun getRoomApiClient(tokenLocalStore: AuthorizedTokenLocalStore): RoomApiClient {
         return roomApiInstance ?: run {
-            RoomApiClientFactory.create(authorizedTokenRepository).also { roomApiInstance = it }
+            RoomApiClientFactory.create(tokenLocalStore).also { roomApiInstance = it }
         }
     }
 }
