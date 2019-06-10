@@ -2,7 +2,6 @@ package com.sadashi.client.chatwork.ui.login
 
 import android.net.Uri
 import android.util.Base64
-import android.util.Log
 import com.sadashi.client.chatwork.BuildConfig
 import com.sadashi.client.chatwork.usecase.auth.AuthorizeUseCase
 import com.sadashi.client.chatwork.usecase.auth.DeleteCodeVerifierUseCase
@@ -11,7 +10,6 @@ import com.sadashi.client.chatwork.utility.RandomStringBuilder
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
 import java.security.MessageDigest
 
 class LoginPresenter(

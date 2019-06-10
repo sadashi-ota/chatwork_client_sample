@@ -30,7 +30,7 @@ class RoomsPresenter(
         existsAccessTokenUseCase.execute()
             .doOnSubscribe { view.showProgress() }
             .observeOn(uiScheduler)
-            .doOnSuccess { view.dismissProgress() }
+            .doOnDispose { view.dismissProgress() }
             .subscribe({ isLogin ->
                 when (isLogin) {
                     true -> loadRooms()
@@ -46,7 +46,7 @@ class RoomsPresenter(
         getRoomUseCase.execute()
             .doOnSubscribe { view.showProgress() }
             .observeOn(uiScheduler)
-            .doOnSuccess { view.dismissProgress() }
+            .doOnDispose { view.dismissProgress() }
             .subscribe({ rooms ->
                 view.showRoomsList(rooms)
             }, { throwable ->
