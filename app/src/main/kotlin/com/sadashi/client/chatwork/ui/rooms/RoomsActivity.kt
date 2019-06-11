@@ -22,6 +22,11 @@ class RoomsActivity : AppCompatActivity(), RoomsTransition {
     }
 
     override fun moveLoginPage() {
-        startActivity(LoginActivity.callingIntent(this))
+        val intent = LoginActivity.callingIntent(this)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+
+        startActivity(intent)
+        finish()
     }
 }

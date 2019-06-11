@@ -1,11 +1,10 @@
 <resources>
     <string name="app_name">chatwork_client_sample</string>
 
-    <string name="label_login">Login</string>
-    <string name="label_rooms">Rooms</string>
-
     <string name="btn_test">test</string>
     <string name="btn_login">login</string>
+
+    <string name="text_logout">Logout</string>
 
     <string name="description_icon">icon</string>
 </resources>

@@ -7,7 +7,6 @@ interface LoginContract {
         fun setUp(view: View, loginTransition: LoginTransition)
         fun onLoaded(uri: Uri): Boolean
         fun login()
-        fun logout()
     }
 
     interface View {

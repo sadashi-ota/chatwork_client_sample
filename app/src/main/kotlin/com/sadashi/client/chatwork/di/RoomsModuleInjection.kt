@@ -12,7 +12,9 @@ import com.sadashi.client.chatwork.infra.domain.room.RoomRepositoryImpl
 import com.sadashi.client.chatwork.infra.preference.AuthorizedTokenPreference
 import com.sadashi.client.chatwork.ui.rooms.RoomsContract
 import com.sadashi.client.chatwork.ui.rooms.RoomsPresenter
+import com.sadashi.client.chatwork.usecase.auth.DeleteAccessTokenUseCase
 import com.sadashi.client.chatwork.usecase.auth.ExistsAccessTokenUseCase
+import com.sadashi.client.chatwork.usecase.auth.impl.DeleteAccessTokenUseCaseImpl
 import com.sadashi.client.chatwork.usecase.auth.impl.ExistsAccessTokenUseCaseImpl
 import com.sadashi.client.chatwork.usecase.rooms.GetRoomsUseCase
 import com.sadashi.client.chatwork.usecase.rooms.impl.GetRoomsUseCaseImpl
@@ -47,7 +49,17 @@ class RoomsModuleInjection(
             return ExistsAccessTokenUseCaseImpl(authorizeService)
         }
 
+    private val deleteAccessTokenUseCase: DeleteAccessTokenUseCase
+        get() {
+            return DeleteAccessTokenUseCaseImpl(authorizeService)
+        }
+
     fun getPresenter(): RoomsContract.Presentation {
-        return RoomsPresenter(existsAccessTokenUseCase, getRoomsUseCase, AndroidSchedulers.mainThread())
+        return RoomsPresenter(
+            existsAccessTokenUseCase,
+            deleteAccessTokenUseCase,
+            getRoomsUseCase,
+            AndroidSchedulers.mainThread()
+        )
     }
 }

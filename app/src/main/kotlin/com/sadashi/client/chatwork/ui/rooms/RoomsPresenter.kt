@@ -1,5 +1,6 @@
 package com.sadashi.client.chatwork.ui.rooms
 
+import com.sadashi.client.chatwork.usecase.auth.DeleteAccessTokenUseCase
 import com.sadashi.client.chatwork.usecase.auth.ExistsAccessTokenUseCase
 import com.sadashi.client.chatwork.usecase.rooms.GetRoomsUseCase
 import io.reactivex.Scheduler
@@ -8,6 +9,7 @@ import io.reactivex.rxkotlin.addTo
 
 class RoomsPresenter(
     private val existsAccessTokenUseCase: ExistsAccessTokenUseCase,
+    private val deleteAccessTokenUseCase: DeleteAccessTokenUseCase,
     private val getRoomUseCase: GetRoomsUseCase,
     private val uiScheduler: Scheduler
 ) : RoomsContract.Presentation {
@@ -30,8 +32,8 @@ class RoomsPresenter(
         existsAccessTokenUseCase.execute()
             .doOnSubscribe { view.showProgress() }
             .observeOn(uiScheduler)
-            .doOnDispose { view.dismissProgress() }
             .subscribe({ isLogin ->
+                view.dismissProgress()
                 when (isLogin) {
                     true -> loadRooms()
                     false -> roomsTransition.moveLoginPage()
@@ -42,15 +44,22 @@ class RoomsPresenter(
             .addTo(disposables)
     }
 
+    override fun logout() {
+        deleteAccessTokenUseCase.execute()
+            .subscribe { roomsTransition.moveLoginPage() }
+            .addTo(disposables)
+    }
+
     private fun loadRooms() {
         getRoomUseCase.execute()
             .doOnSubscribe { view.showProgress() }
             .observeOn(uiScheduler)
-            .doOnDispose { view.dismissProgress() }
             .subscribe({ rooms ->
                 view.showRoomsList(rooms)
+                view.dismissProgress()
             }, { throwable ->
                 view.showErrorDialog(throwable)
+                view.dismissProgress()
             })
             .addTo(disposables)
     }

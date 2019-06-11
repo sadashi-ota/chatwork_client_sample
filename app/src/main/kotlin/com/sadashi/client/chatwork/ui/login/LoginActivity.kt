@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.sadashi.client.chatwork.R
 import com.sadashi.client.chatwork.di.LoginModuleInjection
+import com.sadashi.client.chatwork.ui.rooms.RoomsActivity
 import kotlinx.android.synthetic.main.activity_login.btnLogin
 import kotlinx.android.synthetic.main.activity_login.progressBar
 import kotlinx.android.synthetic.main.activity_login.rootView
@@ -26,6 +27,8 @@ class LoginActivity : AppCompatActivity(), LoginContract.View, LoginTransition {
 
         presenter = LoginModuleInjection(this).getPresenter()
         presenter.setUp(this, this)
+
+        supportActionBar?.title = "Login"
 
         btnLogin.setOnClickListener {
             presenter.login()
@@ -63,7 +66,8 @@ class LoginActivity : AppCompatActivity(), LoginContract.View, LoginTransition {
         Snackbar.make(rootView, "Error!!!!!!", Snackbar.LENGTH_LONG).show()
     }
 
-    override fun navigationBack() {
+    override fun moveRooms() {
+        startActivity(RoomsActivity.callingIntent(this))
         finish()
     }
 }
