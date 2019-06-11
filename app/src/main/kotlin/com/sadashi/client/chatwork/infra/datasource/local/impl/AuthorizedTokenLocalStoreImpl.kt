@@ -6,6 +6,7 @@ import com.sadashi.client.chatwork.domain.auth.RefreshToken
 import com.sadashi.client.chatwork.infra.datasource.local.AuthorizedTokenLocalStore
 import com.sadashi.client.chatwork.infra.datasource.local.json.AuthorizedTokenJson
 import com.sadashi.client.chatwork.infra.preference.AuthorizedTokenPreference
+import com.squareup.moshi.JsonEncodingException
 import com.squareup.moshi.Moshi
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -23,8 +24,8 @@ class AuthorizedTokenLocalStoreImpl(
             }
 
             val token = convertFromJson(authorizedTokenJson) ?: run {
+                preference.delete()
                 source.onError(Throwable("Stored access token is invalid."))
-                delete()
                 return@create
             }
 
@@ -52,15 +53,22 @@ class AuthorizedTokenLocalStoreImpl(
     }
 
     private fun convertFromJson(json: String): AuthorizedToken? {
-        val jsonObject = Moshi.Builder().build().adapter(AuthorizedTokenJson::class.java)
-            .fromJson(json) ?: return null
+        try {
+            val jsonObject = Moshi.Builder().build()
+                .adapter(AuthorizedTokenJson::class.java)
+                .fromJson(json)
 
-        return AuthorizedToken(
-            accessToken = AccessToken(jsonObject.accessToken),
-            refreshToken = RefreshToken(jsonObject.refreshToken),
-            expiredTime = Date(jsonObject.expiredTime),
-            tokenType = jsonObject.tokenType,
-            scope = jsonObject.scope
-        )
+            jsonObject?.accessToken ?: return null
+
+            return AuthorizedToken(
+                accessToken = AccessToken(jsonObject.accessToken),
+                refreshToken = RefreshToken(jsonObject.refreshToken),
+                expiredTime = Date(jsonObject.expiredTime),
+                tokenType = jsonObject.tokenType,
+                scope = jsonObject.scope
+            )
+        } catch (exception: JsonEncodingException) {
+            return null
+        }
     }
 }
