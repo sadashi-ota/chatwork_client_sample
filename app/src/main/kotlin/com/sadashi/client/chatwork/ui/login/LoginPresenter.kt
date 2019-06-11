@@ -55,10 +55,6 @@ class LoginPresenter(
             .addTo(disposables)
     }
 
-    override fun logout() {
-        TODO("not implemented")
-    }
-
     override fun onLoaded(uri: Uri): Boolean {
         val code = uri.getQueryParameter("code") ?: return false
 
@@ -70,7 +66,7 @@ class LoginPresenter(
             .doOnComplete { deleteCodeVerifierUseCase.execute() }
             .subscribe({
                 view.dismissProgress()
-                loginTransition.navigationBack()
+                loginTransition.moveRooms()
             }, { throwable ->
                 view.dismissProgress()
                 view.showErrorDialog(throwable)

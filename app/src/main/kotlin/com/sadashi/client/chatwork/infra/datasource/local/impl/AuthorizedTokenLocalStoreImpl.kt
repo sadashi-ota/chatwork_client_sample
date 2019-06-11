@@ -16,7 +16,8 @@ class AuthorizedTokenLocalStoreImpl(
 ) : AuthorizedTokenLocalStore {
     override fun get(): Maybe<AuthorizedToken> {
         return Maybe.create { source ->
-            val authorizedTokenJson = preference.get() ?: run {
+            val authorizedTokenJson = preference.get()
+            if (authorizedTokenJson.isNullOrEmpty()) {
                 source.onComplete()
                 return@create
             }

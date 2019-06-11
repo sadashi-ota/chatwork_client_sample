@@ -23,8 +23,7 @@ class AuthorizeServiceImpl(
             apiClient.getToken(code = code, codeVerifier = codeVerifier.value)
                 .map { AuthorizedTokenConverter.convertToDomainModel(it) }
                 .subscribe({
-                    localStore.put(it)
-                    emitter.onComplete()
+                    localStore.put(it).subscribe { emitter.onComplete() }
                 }, {
                     emitter.onError(it)
                 })
@@ -48,4 +47,6 @@ class AuthorizeServiceImpl(
             }
         }.subscribeOn(ioScheduler)
     }
+
+    override fun deleteToken(): Completable = localStore.delete()
 }

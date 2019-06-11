@@ -7,6 +7,7 @@ interface RoomsContract {
         fun setUp(view: View, roomsTransition: RoomsTransition)
         fun terminate()
         fun onStart()
+        fun logout()
     }
 
     interface View {
