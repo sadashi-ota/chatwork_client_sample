@@ -15,25 +15,30 @@ import java.util.Date
 
 internal class AuthorizedTokenLocalStoreImplTest : Spek({
 
+    lateinit var preference: AuthorizedTokenPreference
+
+    beforeEachTest {
+        preference = mockk()
+    }
+
     describe("#get") {
         context("When stored valid json in preference") {
             it("calls onSuccess") {
-                val preference: AuthorizedTokenPreference = mockk()
                 val localStore = spyk(
                     AuthorizedTokenLocalStoreImpl(preference),
                     recordPrivateCalls = true
                 )
 
-                every { preference.get() } returns validJson
+                every { preference.get() } returns VALID_JSON
 
                 localStore.get().test().await()
-                    .assertValue(authorizedToken)
+                    .assertValue(VALID_AUTHORIZED_TOKEN)
                     .assertComplete()
 
                 verify(exactly = 1) {
                     localStore.get()
                     preference.get()
-                    localStore["convertFromJson"](eq(validJson))
+                    localStore["convertFromJson"](eq(VALID_JSON))
                 }
                 confirmVerified(preference, localStore)
             }
@@ -42,7 +47,6 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
         context("When not stored json in preference") {
             context("returns empty string from preference") {
                 it("calls onComplete") {
-                    val preference: AuthorizedTokenPreference = mockk()
                     val localStore = spyk(AuthorizedTokenLocalStoreImpl(preference))
 
                     every { preference.get() } returns ""
@@ -59,7 +63,6 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
             }
             context("returns null from preference") {
                 it("calls onComplete") {
-                    val preference: AuthorizedTokenPreference = mockk()
                     val localStore = spyk(AuthorizedTokenLocalStoreImpl(preference))
 
                     every { preference.get() } returns null
@@ -80,7 +83,6 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
             context("Not json format") {
                 val invalidJson = "dummy string"
                 it("calls onError and deletes data in preference") {
-                    val preference: AuthorizedTokenPreference = mockk()
                     val localStore = spyk(
                         AuthorizedTokenLocalStoreImpl(preference),
                         recordPrivateCalls = true
@@ -105,7 +107,6 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
             context("Not contains to need data") {
                 val invalidJson = "{}"
                 it("calls onError and deletes data in preference") {
-                    val preference: AuthorizedTokenPreference = mockk()
                     val localStore = spyk(
                         AuthorizedTokenLocalStoreImpl(preference),
                         recordPrivateCalls = true
@@ -133,21 +134,20 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
     describe("#put") {
         context("When arguments is valid token") {
             it("Succeed to store data") {
-                val preference: AuthorizedTokenPreference = mockk()
                 val localStore = spyk(
                     AuthorizedTokenLocalStoreImpl(preference),
                     recordPrivateCalls = true
                 )
 
-                every { preference.put(eq(validJson)) } returns Unit
+                every { preference.put(eq(VALID_JSON)) } returns Unit
 
-                localStore.put(authorizedToken).test().await()
+                localStore.put(VALID_AUTHORIZED_TOKEN).test().await()
                     .assertComplete()
 
                 verify(exactly = 1) {
-                    localStore.put(eq(authorizedToken))
-                    localStore["convertToJson"](eq(authorizedToken))
-                    preference.put(eq(validJson))
+                    localStore.put(eq(VALID_AUTHORIZED_TOKEN))
+                    localStore["convertToJson"](eq(VALID_AUTHORIZED_TOKEN))
+                    preference.put(eq(VALID_JSON))
                 }
                 confirmVerified(preference, localStore)
             }
@@ -157,7 +157,6 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
     describe("#delete") {
         context("When call delete") {
             it("calls onComplete") {
-                val preference: AuthorizedTokenPreference = mockk()
                 val localStore = spyk(AuthorizedTokenLocalStoreImpl(preference))
 
                 every { preference.delete() } returns Unit
@@ -175,20 +174,20 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
     }
 }) {
     companion object {
-        val authorizedToken = AuthorizedToken(
+        val VALID_AUTHORIZED_TOKEN = AuthorizedToken(
             accessToken = AccessToken("dummy_access_token"),
             refreshToken = RefreshToken("dummy_refresh_token"),
             expiredTime = Date(),
             tokenType = "dummy_token_type",
             scope = "dummy_scope"
         )
-        val validJson = """
+        val VALID_JSON = """
                 |{
-                |    "accessToken" : "${authorizedToken.accessToken.value}",
-                |    "expiredTime" : ${authorizedToken.expiredTime.time},
-                |    "refreshToken" : "${authorizedToken.refreshToken.value}",
-                |    "scope" : "${authorizedToken.scope}",
-                |    "tokenType" : "${authorizedToken.tokenType}"
+                |    "accessToken" : "${VALID_AUTHORIZED_TOKEN.accessToken.value}",
+                |    "expiredTime" : ${VALID_AUTHORIZED_TOKEN.expiredTime.time},
+                |    "refreshToken" : "${VALID_AUTHORIZED_TOKEN.refreshToken.value}",
+                |    "scope" : "${VALID_AUTHORIZED_TOKEN.scope}",
+                |    "tokenType" : "${VALID_AUTHORIZED_TOKEN.tokenType}"
                 |}
                 |"""
             .trimMargin()

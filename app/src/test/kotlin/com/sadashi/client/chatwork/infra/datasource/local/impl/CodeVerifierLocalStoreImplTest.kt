@@ -10,16 +10,21 @@ import org.spekframework.spek2.style.specification.describe
 
 internal class CodeVerifierLocalStoreImplTest : Spek({
 
+    lateinit var preference: CodeVerifierPreference
+    lateinit var localStore: CodeVerifierLocalStoreImpl
+
+    beforeEachTest {
+        preference = mockk()
+        localStore = CodeVerifierLocalStoreImpl(preference)
+    }
+
     describe("#get") {
         context("When stored valid string in preference") {
             it("calls onSuccess") {
-                val preference: CodeVerifierPreference = mockk()
-                val localStore = CodeVerifierLocalStoreImpl(preference)
-
-                every { preference.get() } returns storedVerifierCode
+                every { preference.get() } returns STORED_VERIFIER_CODE
 
                 localStore.get().test().await()
-                    .assertValue(storedVerifierCode)
+                    .assertValue(STORED_VERIFIER_CODE)
                     .assertComplete()
 
                 verify(exactly = 1) {
@@ -31,9 +36,6 @@ internal class CodeVerifierLocalStoreImplTest : Spek({
         context("When stored invalid string in preference") {
             context("returns empty string from preference") {
                 it("calls onError and deletes string in preference") {
-                    val preference: CodeVerifierPreference = mockk()
-                    val localStore = CodeVerifierLocalStoreImpl(preference)
-
                     every { preference.get() } returns ""
                     every { preference.delete() } returns Unit
 
@@ -50,9 +52,6 @@ internal class CodeVerifierLocalStoreImplTest : Spek({
             }
             context("returns null from preference") {
                 it("calls onError and deletes string in preference") {
-                    val preference: CodeVerifierPreference = mockk()
-                    val localStore = CodeVerifierLocalStoreImpl(preference)
-
                     every { preference.get() } returns null
                     every { preference.delete() } returns Unit
 
@@ -73,17 +72,13 @@ internal class CodeVerifierLocalStoreImplTest : Spek({
     describe("#put") {
         context("When arguments is valid token") {
             it("Succeed to store data") {
+                every { preference.put(eq(STORED_VERIFIER_CODE)) } returns Unit
 
-                val preference: CodeVerifierPreference = mockk()
-                val localStore = CodeVerifierLocalStoreImpl(preference)
-
-                every { preference.put(eq(storedVerifierCode)) } returns Unit
-
-                localStore.put(storedVerifierCode).test().await()
+                localStore.put(STORED_VERIFIER_CODE).test().await()
                     .assertComplete()
 
                 verify(exactly = 1) {
-                    preference.put(eq(storedVerifierCode))
+                    preference.put(eq(STORED_VERIFIER_CODE))
                 }
                 confirmVerified(preference)
             }
@@ -93,9 +88,6 @@ internal class CodeVerifierLocalStoreImplTest : Spek({
     describe("#delete") {
         context("When call delete") {
             it("calls onComplete") {
-                val preference: CodeVerifierPreference = mockk()
-                val localStore = CodeVerifierLocalStoreImpl(preference)
-
                 every { preference.delete() } returns Unit
 
                 localStore.delete().test().await()
@@ -111,6 +103,6 @@ internal class CodeVerifierLocalStoreImplTest : Spek({
 
 }) {
     companion object {
-        const val storedVerifierCode = "dummy_code"
+        const val STORED_VERIFIER_CODE = "dummy_code"
     }
 }
