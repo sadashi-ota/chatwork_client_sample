@@ -11,12 +11,12 @@ class CodeVerifierLocalStoreImpl(
     override fun get(): Single<String> {
         return Single.create { source ->
             val codeVerifier = preference.get()
-            if (codeVerifier is String) {
-                source.onSuccess(codeVerifier)
-            } else {
+            if (codeVerifier.isNullOrEmpty()) {
                 source.onError(Throwable("Stored code verifier is invalid."))
-                delete()
+                preference.delete()
+                return@create
             }
+            source.onSuccess(codeVerifier)
         }
     }
 

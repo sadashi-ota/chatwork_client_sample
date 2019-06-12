@@ -79,7 +79,7 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
         context("When stored invalid json in preference") {
             context("Not json format") {
                 val invalidJson = "dummy string"
-                it("calls onError") {
+                it("calls onError and deletes data in preference") {
                     val preference: AuthorizedTokenPreference = mockk()
                     val localStore = spyk(
                         AuthorizedTokenLocalStoreImpl(preference),
@@ -104,7 +104,7 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
             }
             context("Not contains to need data") {
                 val invalidJson = "{}"
-                it("calls onError") {
+                it("calls onError and deletes data in preference") {
                     val preference: AuthorizedTokenPreference = mockk()
                     val localStore = spyk(
                         AuthorizedTokenLocalStoreImpl(preference),
