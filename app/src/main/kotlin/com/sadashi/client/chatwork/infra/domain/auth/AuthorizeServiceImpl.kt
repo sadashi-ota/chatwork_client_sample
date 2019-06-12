@@ -15,17 +15,21 @@ class AuthorizeServiceImpl(
     private val ioScheduler: Scheduler
 ) : AuthorizeService {
 
-    override fun execute(
+    override fun executeAuthorize(
         code: String,
         codeVerifier: CodeVerifier
     ): Completable {
         return Completable.create { emitter ->
             apiClient.getToken(code = code, codeVerifier = codeVerifier.value)
                 .map { AuthorizedTokenConverter.convertToDomainModel(it) }
-                .subscribe({
-                    localStore.put(it).subscribe { emitter.onComplete() }
-                }, {
-                    emitter.onError(it)
+                .subscribe({ token ->
+                    localStore.put(token).subscribe({
+                        emitter.onComplete()
+                    }, { throwable ->
+                        emitter.onError(throwable)
+                    })
+                }, { throwable ->
+                    emitter.onError(throwable)
                 })
         }.subscribeOn(ioScheduler)
     }
@@ -39,7 +43,9 @@ class AuthorizeServiceImpl(
             if (token.isExpired()) {
                 apiClient.refreshToken(refreshToken = token.refreshToken.value)
                     .map { AuthorizedTokenConverter.convertToDomainModel(it) }
-                    .doOnSuccess { localStore.put(it) }
+                    .flatMap {
+                        localStore.put(it).toSingle { it }
+                    }
             } else {
                 Single.create<AuthorizedToken> {
                     it.onSuccess(token)
