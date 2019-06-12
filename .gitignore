@@ -68,3 +68,6 @@ fastlane/readme.md
 
 # properties
 properties/secrets.properties
+
+# vendor
+vendor/
