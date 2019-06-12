@@ -58,7 +58,7 @@ internal class AuthorizeServiceImplTest : Spek({
                     .executeAuthorize(VALID_CODE, CodeVerifier(VALID_CODE_VERIFIER))
                     .test().await()
                     .assertNoErrors()
-                    .assertNotComplete()
+                    .assertComplete()
 
                 verify(exactly = 1) {
                     apiClient.getToken(code = VALID_CODE, codeVerifier = VALID_CODE_VERIFIER)
