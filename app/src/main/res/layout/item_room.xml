@@ -12,7 +12,6 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_width="@dimen/item_icon_image_size"
             android:layout_height="@dimen/item_icon_image_size"
-            android:contentDescription="@string/description_icon"
             android:transitionName="user_icon"/>
 
     <TextView
