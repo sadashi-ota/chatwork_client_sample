@@ -12,7 +12,7 @@ class AuthorizeUseCaseImpl(
     override fun execute(code: String): Completable {
         return codeVerifierRepository.find()
             .flatMapCompletable { codeVerifier ->
-                authorizeService.execute(code, codeVerifier)
+                authorizeService.executeAuthorize(code, codeVerifier)
             }
     }
 }
