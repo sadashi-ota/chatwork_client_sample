@@ -23,13 +23,13 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
 
     describe("#get") {
         context("When stored valid json in preference") {
+            beforeEach { every { preference.get() } returns VALID_JSON }
+
             it("calls onSuccess") {
                 val localStore = spyk(
                     AuthorizedTokenLocalStoreImpl(preference),
                     recordPrivateCalls = true
                 )
-
-                every { preference.get() } returns VALID_JSON
 
                 localStore.get().test().await()
                     .assertValue(VALID_AUTHORIZED_TOKEN)
@@ -46,10 +46,10 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
 
         context("When not stored json in preference") {
             context("returns empty string from preference") {
+                beforeEach { every { preference.get() } returns "" }
+
                 it("calls onComplete") {
                     val localStore = spyk(AuthorizedTokenLocalStoreImpl(preference))
-
-                    every { preference.get() } returns ""
 
                     localStore.get().test().await()
                         .assertComplete()
@@ -62,10 +62,10 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
                 }
             }
             context("returns null from preference") {
+                beforeEach { every { preference.get() } returns null }
+
                 it("calls onComplete") {
                     val localStore = spyk(AuthorizedTokenLocalStoreImpl(preference))
-
-                    every { preference.get() } returns null
 
                     localStore.get().test().await()
                         .assertComplete()
@@ -82,13 +82,15 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
         context("When stored invalid json in preference") {
             context("Not json format") {
                 val invalidJson = "dummy string"
+
+                beforeEach { every { preference.get() } returns invalidJson }
+
                 it("calls onError and deletes data in preference") {
                     val localStore = spyk(
                         AuthorizedTokenLocalStoreImpl(preference),
                         recordPrivateCalls = true
                     )
 
-                    every { preference.get() } returns invalidJson
                     every { preference.delete() } returns Unit
 
                     localStore.get().test().await()
@@ -106,13 +108,15 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
             }
             context("Not contains to need data") {
                 val invalidJson = "{}"
+
+                beforeEach { every { preference.get() } returns invalidJson }
+
                 it("calls onError and deletes data in preference") {
                     val localStore = spyk(
                         AuthorizedTokenLocalStoreImpl(preference),
                         recordPrivateCalls = true
                     )
 
-                    every { preference.get() } returns invalidJson
                     every { preference.delete() } returns Unit
 
                     localStore.get().test().await()
@@ -133,13 +137,13 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
 
     describe("#put") {
         context("When arguments is valid token") {
+            beforeEach { every { preference.put(eq(VALID_JSON)) } returns Unit }
+
             it("Succeed to store data") {
                 val localStore = spyk(
                     AuthorizedTokenLocalStoreImpl(preference),
                     recordPrivateCalls = true
                 )
-
-                every { preference.put(eq(VALID_JSON)) } returns Unit
 
                 localStore.put(VALID_AUTHORIZED_TOKEN).test().await()
                     .assertComplete()
@@ -156,10 +160,10 @@ internal class AuthorizedTokenLocalStoreImplTest : Spek({
 
     describe("#delete") {
         context("When call delete") {
+            beforeEach { every { preference.delete() } returns Unit }
+
             it("calls onComplete") {
                 val localStore = spyk(AuthorizedTokenLocalStoreImpl(preference))
-
-                every { preference.delete() } returns Unit
 
                 localStore.delete().test().await()
                     .assertComplete()
