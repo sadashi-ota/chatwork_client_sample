@@ -20,9 +20,9 @@ internal class CodeVerifierLocalStoreImplTest : Spek({
 
     describe("#get") {
         context("When stored valid string in preference") {
-            it("calls onSuccess") {
-                every { preference.get() } returns STORED_VERIFIER_CODE
+            beforeEach { every { preference.get() } returns STORED_VERIFIER_CODE }
 
+            it("calls onSuccess") {
                 localStore.get().test().await()
                     .assertValue(STORED_VERIFIER_CODE)
                     .assertComplete()
@@ -35,8 +35,9 @@ internal class CodeVerifierLocalStoreImplTest : Spek({
         }
         context("When stored invalid string in preference") {
             context("returns empty string from preference") {
+                beforeEach { every { preference.get() } returns "" }
+
                 it("calls onError and deletes string in preference") {
-                    every { preference.get() } returns ""
                     every { preference.delete() } returns Unit
 
                     localStore.get().test().await()
@@ -51,8 +52,9 @@ internal class CodeVerifierLocalStoreImplTest : Spek({
                 }
             }
             context("returns null from preference") {
+                beforeEach { every { preference.get() } returns null }
+
                 it("calls onError and deletes string in preference") {
-                    every { preference.get() } returns null
                     every { preference.delete() } returns Unit
 
                     localStore.get().test().await()
@@ -71,9 +73,9 @@ internal class CodeVerifierLocalStoreImplTest : Spek({
 
     describe("#put") {
         context("When arguments is valid token") {
-            it("Succeed to store data") {
-                every { preference.put(eq(STORED_VERIFIER_CODE)) } returns Unit
+            beforeEach { every { preference.put(eq(STORED_VERIFIER_CODE)) } returns Unit }
 
+            it("Succeed to store data") {
                 localStore.put(STORED_VERIFIER_CODE).test().await()
                     .assertComplete()
 
@@ -87,8 +89,9 @@ internal class CodeVerifierLocalStoreImplTest : Spek({
 
     describe("#delete") {
         context("When call delete") {
+            beforeEach { every { preference.delete() } returns Unit }
+
             it("calls onComplete") {
-                every { preference.delete() } returns Unit
 
                 localStore.delete().test().await()
                     .assertComplete()

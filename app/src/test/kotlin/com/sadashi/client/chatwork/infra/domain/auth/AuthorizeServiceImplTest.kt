@@ -44,37 +44,61 @@ internal class AuthorizeServiceImplTest : Spek({
     }
 
     describe("#executeAuthorize") {
-        context("When arguments is valid") {
-            it("calls onComplete") {
+        context("When api is succeed") {
+            beforeEach {
                 every {
                     apiClient.getToken(code = VALID_CODE, codeVerifier = VALID_CODE_VERIFIER)
                 } returns Single.just(VALID_RESPONSE)
-                every {
-                    AuthorizedTokenConverter.convertToDomainModel(VALID_RESPONSE)
-                } returns VALID_AUTHORIZED_TOKEN
-                every { localStore.put(VALID_AUTHORIZED_TOKEN) } returns Completable.fromCallable {}
-
-                authorizeService
-                    .executeAuthorize(VALID_CODE, CodeVerifier(VALID_CODE_VERIFIER))
-                    .test().await()
-                    .assertNoErrors()
-                    .assertComplete()
-
-                verify(exactly = 1) {
-                    apiClient.getToken(code = VALID_CODE, codeVerifier = VALID_CODE_VERIFIER)
-                    AuthorizedTokenConverter.convertToDomainModel(VALID_RESPONSE)
-                    localStore.put(VALID_AUTHORIZED_TOKEN)
+                every { AuthorizedTokenConverter.convertToDomainModel(VALID_RESPONSE) } returns VALID_AUTHORIZED_TOKEN
+            }
+            context("When authorized token is succeed to store") {
+                beforeEach {
+                    every { localStore.put(VALID_AUTHORIZED_TOKEN) } returns Completable.complete()
                 }
-                confirmVerified(apiClient, localStore, AuthorizedTokenConverter)
+                it("calls onComplete") {
+                    authorizeService
+                        .executeAuthorize(VALID_CODE, CodeVerifier(VALID_CODE_VERIFIER))
+                        .test().await()
+                        .assertNoErrors()
+                        .assertComplete()
+
+                    verify(exactly = 1) {
+                        apiClient.getToken(code = VALID_CODE, codeVerifier = VALID_CODE_VERIFIER)
+                        AuthorizedTokenConverter.convertToDomainModel(VALID_RESPONSE)
+                        localStore.put(VALID_AUTHORIZED_TOKEN)
+                    }
+                    confirmVerified(apiClient, localStore, AuthorizedTokenConverter)
+                }
+            }
+            context("When authorized token is failed to store") {
+                beforeEach {
+                    every {
+                        localStore.put(VALID_AUTHORIZED_TOKEN)
+                    } returns Completable.error(Throwable("Dummy error"))
+                }
+                it("calls onError") {
+                    authorizeService.executeAuthorize(VALID_CODE, CodeVerifier(VALID_CODE_VERIFIER))
+                        .test().await()
+                        .assertError(Throwable::class.java)
+                        .assertNotComplete()
+
+                    verify(exactly = 1) {
+                        apiClient.getToken(code = VALID_CODE, codeVerifier = VALID_CODE_VERIFIER)
+                        AuthorizedTokenConverter.convertToDomainModel(VALID_RESPONSE)
+                        localStore.put(VALID_AUTHORIZED_TOKEN)
+                    }
+                    confirmVerified(apiClient, localStore, AuthorizedTokenConverter)
+                }
             }
         }
-
         context("When api is failed") {
-            it("calls onError") {
+            beforeEach {
                 every {
                     apiClient.getToken(code = any(), codeVerifier = any())
                 } returns Single.error(Throwable("Dummy error."))
+            }
 
+            it("calls onError") {
                 authorizeService
                     .executeAuthorize("dummy", CodeVerifier("dummy"))
                     .test().await()
@@ -87,37 +111,13 @@ internal class AuthorizeServiceImplTest : Spek({
                 confirmVerified(apiClient, localStore, AuthorizedTokenConverter)
             }
         }
-
-        context("When authorized token is failed to store") {
-            it("calls onError") {
-                every {
-                    apiClient.getToken(code = VALID_CODE, codeVerifier = VALID_CODE_VERIFIER)
-                } returns Single.just(VALID_RESPONSE)
-                every {
-                    AuthorizedTokenConverter.convertToDomainModel(VALID_RESPONSE)
-                } returns VALID_AUTHORIZED_TOKEN
-                every { localStore.put(VALID_AUTHORIZED_TOKEN) } returns Completable.error(Throwable("Dummy error"))
-
-                authorizeService.executeAuthorize(VALID_CODE, CodeVerifier(VALID_CODE_VERIFIER))
-                    .test().await()
-                    .assertError(Throwable::class.java)
-                    .assertNotComplete()
-
-                verify(exactly = 1) {
-                    apiClient.getToken(code = VALID_CODE, codeVerifier = VALID_CODE_VERIFIER)
-                    AuthorizedTokenConverter.convertToDomainModel(VALID_RESPONSE)
-                    localStore.put(VALID_AUTHORIZED_TOKEN)
-                }
-                confirmVerified(apiClient, localStore, AuthorizedTokenConverter)
-            }
-        }
     }
 
     describe("#existsToken") {
         context("When get valid token from local store") {
-            it("calls onSuccess and value is true") {
-                every { localStore.get() } returns Maybe.just(VALID_AUTHORIZED_TOKEN)
+            beforeEach { every { localStore.get() } returns Maybe.just(VALID_AUTHORIZED_TOKEN) }
 
+            it("calls onSuccess and value is true") {
                 authorizeService.existsToken().test().await()
                     .assertValue(true)
                     .assertComplete()
@@ -129,9 +129,9 @@ internal class AuthorizeServiceImplTest : Spek({
             }
         }
         context("When does not exists token at local store") {
-            it("calls onSuccess and value is false") {
-                every { localStore.get() } returns Maybe.empty()
+            beforeEach { every { localStore.get() } returns Maybe.empty() }
 
+            it("calls onSuccess and value is false") {
                 authorizeService.existsToken().test().await()
                     .assertValue(false)
                     .assertComplete()
@@ -143,9 +143,9 @@ internal class AuthorizeServiceImplTest : Spek({
             }
         }
         context("When fail to get token from local store") {
-            it("calls onError") {
-                every { localStore.get() } returns Maybe.error(Throwable("Dummy error"))
+            beforeEach { every { localStore.get() } returns Maybe.error(Throwable("Dummy error")) }
 
+            it("calls onError") {
                 authorizeService.existsToken().test().await()
                     .assertError(Throwable::class.java)
                     .assertNotComplete()
@@ -166,10 +166,12 @@ internal class AuthorizeServiceImplTest : Spek({
         }
 
         context("When get valid token from local store") {
+            beforeEach { every { localStore.get() } returns Maybe.just(spyToken) }
+
             context("when the token has not expired") {
+                beforeEach { every { spyToken.isExpired() } returns false }
+
                 it("calls onSuccess") {
-                    every { localStore.get() } returns Maybe.just(spyToken)
-                    every { spyToken.isExpired() } returns false
 
                     authorizeService.getToken().test().await()
                         .assertValue(spyToken)
@@ -184,22 +186,25 @@ internal class AuthorizeServiceImplTest : Spek({
             }
 
             context("when the token has expired") {
-                context("when succeeds to refresh token") {
-                    context("when succeeds to store refresh token") {
-                        it("calls onSuccess") {
-                            every { localStore.get() } returns Maybe.just(spyToken)
-                            every { spyToken.isExpired() } returns true
-                            every { spyToken.refreshToken.value } returns VALID_RESPONSE.refreshToken
-                            every {
-                                apiClient.refreshToken(refreshToken = eq(VALID_RESPONSE.refreshToken))
-                            } returns Single.just(VALID_RESPONSE)
-                            every {
-                                AuthorizedTokenConverter.convertToDomainModel(eq(VALID_RESPONSE))
-                            } returns VALID_AUTHORIZED_TOKEN
-                            every {
-                                localStore.put(eq(VALID_AUTHORIZED_TOKEN))
-                            } returns Completable.fromCallable { }
+                beforeEach {
+                    every { spyToken.isExpired() } returns true
+                    every { spyToken.refreshToken.value } returns VALID_RESPONSE.refreshToken
+                }
 
+                context("when succeeds to refresh token") {
+                    beforeEach {
+                        every {
+                            apiClient.refreshToken(refreshToken = eq(VALID_RESPONSE.refreshToken))
+                        } returns Single.just(VALID_RESPONSE)
+                        every {
+                            AuthorizedTokenConverter.convertToDomainModel(eq(VALID_RESPONSE))
+                        } returns VALID_AUTHORIZED_TOKEN
+                    }
+                    context("when succeeds to store refresh token") {
+                        beforeEach {
+                            every { localStore.put(eq(VALID_AUTHORIZED_TOKEN)) } returns Completable.complete()
+                        }
+                        it("calls onSuccess") {
                             authorizeService.getToken().test().await()
                                 .assertValue(VALID_AUTHORIZED_TOKEN)
                                 .assertComplete()
@@ -216,20 +221,11 @@ internal class AuthorizeServiceImplTest : Spek({
                         }
                     }
                     context("when fails to store refresh token") {
-                        it("calls onError") {
-                            every { localStore.get() } returns Maybe.just(spyToken)
-                            every { spyToken.isExpired() } returns true
-                            every { spyToken.refreshToken.value } returns VALID_RESPONSE.refreshToken
-                            every {
-                                apiClient.refreshToken(refreshToken = eq(VALID_RESPONSE.refreshToken))
-                            } returns Single.just(VALID_RESPONSE)
-                            every {
-                                AuthorizedTokenConverter.convertToDomainModel(eq(VALID_RESPONSE))
-                            } returns VALID_AUTHORIZED_TOKEN
-                            every {
-                                localStore.put(any())
-                            } returns Completable.error(Throwable("Dummy error"))
+                        beforeEach {
+                            every { localStore.put(any()) } returns Completable.error(Throwable("Dummy error"))
+                        }
 
+                        it("calls onError") {
                             authorizeService.getToken().test().await()
                                 .assertError(Throwable::class.java)
                                 .assertNotComplete()
@@ -247,14 +243,12 @@ internal class AuthorizeServiceImplTest : Spek({
                     }
                 }
                 context("when fails to refresh token") {
-                    it("calls onError") {
-                        every { localStore.get() } returns Maybe.just(spyToken)
-                        every { spyToken.isExpired() } returns true
-                        every { spyToken.refreshToken.value } returns VALID_RESPONSE.refreshToken
+                    beforeEach {
                         every {
                             apiClient.refreshToken(refreshToken = eq(VALID_RESPONSE.refreshToken))
                         } returns Single.error(Throwable("Dummy error"))
-
+                    }
+                    it("calls onError") {
                         authorizeService.getToken().test().await()
                             .assertError(Throwable::class.java)
                             .assertNotComplete()
@@ -271,9 +265,9 @@ internal class AuthorizeServiceImplTest : Spek({
             }
         }
         context("When fails to get token from local store") {
-            it("calls onError") {
-                every { localStore.get() } returns Maybe.error(Throwable("Dummy error"))
+            beforeEach { every { localStore.get() } returns Maybe.error(Throwable("Dummy error")) }
 
+            it("calls onError") {
                 authorizeService.getToken().test().await()
                     .assertError(Throwable::class.java)
                     .assertNotComplete()
@@ -288,9 +282,9 @@ internal class AuthorizeServiceImplTest : Spek({
 
     describe("#deleteToken") {
         context("When succeeds to delete from local store") {
-            it("calls onComplete") {
-                every { localStore.delete() } returns Completable.fromCallable { }
+            beforeEach { every { localStore.delete() } returns Completable.complete() }
 
+            it("calls onComplete") {
                 authorizeService.deleteToken().test().await()
                     .assertNoErrors()
                     .assertComplete()
@@ -302,9 +296,9 @@ internal class AuthorizeServiceImplTest : Spek({
             }
         }
         context("When fails to delete from local store") {
-            it("calls onError") {
-                every { localStore.delete() } returns Completable.error(Throwable("Dummy error"))
+            beforeEach { every { localStore.delete() } returns Completable.error(Throwable("Dummy error")) }
 
+            it("calls onError") {
                 authorizeService.deleteToken().test().await()
                     .assertError(Throwable::class.java)
                     .assertNotComplete()
