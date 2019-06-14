@@ -6,9 +6,14 @@ plugins {
     id("kotlin-android")
     id("kotlin-android-extensions")
     id("de.mannodermaus.android-junit5")
+    id("jacoco-android")
 }
 
 Prop.loadProperties("$rootDir/properties/secrets.properties")
+
+jacoco {
+    toolVersion = "0.8.3"
+}
 
 android {
     compileSdkVersion(Deps.Versions.compileSdk)
