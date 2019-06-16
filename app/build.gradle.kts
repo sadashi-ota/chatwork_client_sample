@@ -69,7 +69,7 @@ fun setCommonBuildConfig(buildType: BuildType) {
 
 jacocoAndroidUnitTestReport {
     html.enabled(true)
-    xml.enabled(false)
+    xml.enabled(true)
     csv.enabled(false)
 
     val excludeList = arrayListOf(
