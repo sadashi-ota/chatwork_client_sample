@@ -10,7 +10,6 @@ buildscript {
         classpath(Deps.Gradle.build)
         classpath(Deps.Gradle.kotlin)
         classpath(Deps.Gradle.androidJunit5)
-        classpath(Deps.Gradle.jacoco)
     }
 }
 
