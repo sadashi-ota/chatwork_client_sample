@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.sadashi.client.chatwork.R
 import com.sadashi.client.chatwork.di.LoginModuleInjection
-import com.sadashi.client.chatwork.ui.rooms.RoomsActivity
+import com.sadashi.client.chatwork.ui.room.list.RoomsActivity
 import kotlinx.android.synthetic.main.activity_login.btnLogin
 import kotlinx.android.synthetic.main.activity_login.progressBar
 import kotlinx.android.synthetic.main.activity_login.rootView

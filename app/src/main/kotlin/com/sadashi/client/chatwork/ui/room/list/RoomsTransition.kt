@@ -1,4 +1,4 @@
-package com.sadashi.client.chatwork.ui.rooms
+package com.sadashi.client.chatwork.ui.room.list
 
 interface RoomsTransition {
     fun moveLoginPage()

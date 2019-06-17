@@ -1,4 +1,4 @@
-package com.sadashi.client.chatwork.ui.rooms
+package com.sadashi.client.chatwork.ui.room.list
 
 import android.content.Context
 import android.content.Intent

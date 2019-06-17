@@ -10,8 +10,8 @@ import com.sadashi.client.chatwork.infra.datasource.local.impl.AuthorizedTokenLo
 import com.sadashi.client.chatwork.infra.domain.auth.AuthorizeServiceImpl
 import com.sadashi.client.chatwork.infra.domain.room.RoomRepositoryImpl
 import com.sadashi.client.chatwork.infra.preference.AuthorizedTokenPreference
-import com.sadashi.client.chatwork.ui.rooms.RoomsContract
-import com.sadashi.client.chatwork.ui.rooms.RoomsPresenter
+import com.sadashi.client.chatwork.ui.room.list.RoomsContract
+import com.sadashi.client.chatwork.ui.room.list.RoomsPresenter
 import com.sadashi.client.chatwork.usecase.auth.DeleteAccessTokenUseCase
 import com.sadashi.client.chatwork.usecase.auth.ExistsAccessTokenUseCase
 import com.sadashi.client.chatwork.usecase.auth.impl.DeleteAccessTokenUseCaseImpl
