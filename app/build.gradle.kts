@@ -1,5 +1,4 @@
 import com.android.build.gradle.internal.dsl.BuildType
-import com.dicedmelon.gradle.jacoco.android.JacocoAndroidUnitTestReportExtension
 import de.mannodermaus.gradle.plugins.junit5.junitPlatform
 
 plugins {
@@ -7,7 +6,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-android-extensions")
     id("de.mannodermaus.android-junit5")
-    id("jacoco-android")
+    id("jacoco")
 }
 
 Prop.loadProperties("$rootDir/properties/secrets.properties")
@@ -50,6 +49,19 @@ android {
             filters {
                 includeEngines("spek2")
             }
+            jacocoOptions {
+                html.enabled = true
+                xml.enabled = true
+                csv.enabled = false
+                excludedClasses.addAll(
+                    listOf(
+                        "**/di/*.class",
+                        "**/extensions/*.class",
+                        "**/ui/**/*.class",
+                        "**/utility/*.class"
+                    )
+                )
+            }
         }
     }
 }
@@ -65,19 +77,4 @@ fun setCommonBuildConfig(buildType: BuildType) {
     buildType.buildConfigField("String", "API_DOMAIN", "\"${Prop.map["apiDomain"]}\"")
     buildType.buildConfigField("String", "AUTH_DOMAIN", "\"${Prop.map["authDomain"]}\"")
     buildType.buildConfigField("String", "AUTH_CALLBACK", "\"${Prop.map["authCallback"]}\"")
-}
-
-jacocoAndroidUnitTestReport {
-    html.enabled(true)
-    xml.enabled(true)
-    csv.enabled(false)
-
-    val excludeList = arrayListOf(
-        "**/di/*.class",
-        "**/extensions/*.class",
-        "**/ui/**/*.class",
-        "**/utility/*.class"
-    )
-    excludeList.addAll(JacocoAndroidUnitTestReportExtension.defaultExcludes)
-    excludes = excludeList
 }

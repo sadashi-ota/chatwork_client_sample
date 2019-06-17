@@ -12,7 +12,6 @@ object Deps {
         const val build = "com.android.tools.build:gradle:3.4.1"
         const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
         const val androidJunit5 = "de.mannodermaus.gradle.plugins:android-junit5:1.4.2.0"
-        const val jacoco = "com.dicedmelon.gradle:jacoco-android:0.1.4"
     }
 
     object Kotlin {
