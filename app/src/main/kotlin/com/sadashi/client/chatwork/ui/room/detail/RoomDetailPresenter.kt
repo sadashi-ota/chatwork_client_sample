@@ -1,9 +1,14 @@
 package com.sadashi.client.chatwork.ui.room.detail
 
-class RoomDetailPresenter : RoomDetailContract.Presentation {
+class RoomDetailPresenter(
+) : RoomDetailContract.Presentation {
+
+    lateinit var view: RoomDetailContract.View
+    lateinit var roomsTransition: RoomDetailTransition
 
     override fun setUp(view: RoomDetailContract.View, roomsTransition: RoomDetailTransition) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        this.view = view
+        this.roomsTransition = roomsTransition
     }
 
     override fun terminate() {

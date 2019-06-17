@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.sadashi.client.chatwork.R
 import com.sadashi.client.chatwork.domain.rooms.RoomId
 
-class RoomDetailActivity : AppCompatActivity() {
+class RoomDetailActivity : AppCompatActivity(), RoomDetailTransition {
     companion object {
         private const val INTENT_KEY = "com.sadashi.client.chatwork.INTENT_PARAM_ROOM"
 
@@ -31,5 +31,9 @@ class RoomDetailActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().also {
             it.replace(R.id.container, RoomDetailFragment.newInstance(roomId))
         }.commitNow()
+    }
+
+    override fun navigationBack() {
+        finish()
     }
 }
