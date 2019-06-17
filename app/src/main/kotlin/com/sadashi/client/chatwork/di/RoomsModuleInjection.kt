@@ -39,10 +39,7 @@ class RoomsModuleInjection(
     private val roomApiClient: RoomApiClient = ApiModule.getRoomApiClient(authorizedTokenLocalStore)
 
     private val roomRepository: RoomRepository = RoomRepositoryImpl(roomApiClient, Schedulers.io())
-    private val getRoomsUseCase: GetRoomsUseCase
-        get() {
-            return GetRoomsUseCaseImpl(roomRepository, authorizeService)
-        }
+    private val getRoomsUseCase: GetRoomsUseCase = GetRoomsUseCaseImpl(roomRepository)
 
     private val existsAccessTokenUseCase: ExistsAccessTokenUseCase
         get() {
