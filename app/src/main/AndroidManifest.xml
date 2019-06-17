@@ -29,5 +29,7 @@
                       android:scheme="sadashi"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ui.room.detail.RoomDetailActivity"
+                  android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 </manifest>
