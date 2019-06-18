@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.sadashi.client.chatwork.R
 import com.sadashi.client.chatwork.di.RoomDetailModuleInjection
+import com.sadashi.client.chatwork.domain.rooms.Message
 import com.sadashi.client.chatwork.domain.rooms.Room
 import com.sadashi.client.chatwork.domain.rooms.RoomId
 
@@ -43,8 +44,6 @@ class RoomDetailFragment : Fragment(), RoomDetailContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
     }
 
     override fun showRoomDetail(room: Room) {
@@ -52,6 +51,10 @@ class RoomDetailFragment : Fragment(), RoomDetailContract.View {
     }
 
     override fun showProgress() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun showMessages(messages: List<Message>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
