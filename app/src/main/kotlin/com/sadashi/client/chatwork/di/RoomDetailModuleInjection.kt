@@ -15,6 +15,7 @@ import com.sadashi.client.chatwork.usecase.rooms.GetRoomDetailUseCase
 import com.sadashi.client.chatwork.usecase.rooms.impl.GetMembersUseCaseImpl
 import com.sadashi.client.chatwork.usecase.rooms.impl.GetMessagesUseCaseImpl
 import com.sadashi.client.chatwork.usecase.rooms.impl.GetRoomDetailUseCaseImpl
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class RoomDetailModuleInjection(val context: Context) {
@@ -33,6 +34,11 @@ class RoomDetailModuleInjection(val context: Context) {
     private val getMessagesUseCase: GetMessagesUseCase = GetMessagesUseCaseImpl(roomRepository)
 
     fun getPresenter(): RoomDetailContract.Presentation {
-        return RoomDetailPresenter(getRoomUseCase, getMembersUseCase, getMessagesUseCase)
+        return RoomDetailPresenter(
+            getRoomUseCase,
+            getMembersUseCase,
+            getMessagesUseCase,
+            AndroidSchedulers.mainThread()
+        )
     }
 }
