@@ -13,6 +13,7 @@ object MessageConverter {
         return Message(
             messageId = MessageId(message.messageId),
             body = message.body,
+            account = AccountConverter.convertToDomainModel(message.account),
             sendTime = message.sendTime,
             updateTime = message.updateTime
         )

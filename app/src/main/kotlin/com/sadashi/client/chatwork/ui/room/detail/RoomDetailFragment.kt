@@ -6,11 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.sadashi.client.chatwork.R
 import com.sadashi.client.chatwork.di.RoomDetailModuleInjection
+import com.sadashi.client.chatwork.domain.rooms.Account
 import com.sadashi.client.chatwork.domain.rooms.Message
 import com.sadashi.client.chatwork.domain.rooms.Room
 import com.sadashi.client.chatwork.domain.rooms.RoomId
+import kotlinx.android.synthetic.main.fragment_room_detail.messageListView
+import kotlinx.android.synthetic.main.fragment_room_detail.progressBar
+import kotlinx.android.synthetic.main.fragment_room_detail.rootLayout
+import kotlinx.android.synthetic.main.fragment_room_detail.toolbar
 
 class RoomDetailFragment : Fragment(), RoomDetailContract.View {
     companion object {
@@ -26,6 +33,7 @@ class RoomDetailFragment : Fragment(), RoomDetailContract.View {
     }
 
     lateinit var presenter: RoomDetailContract.Presentation
+    private lateinit var messageListAdapter: MessageListAdapter
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -44,26 +52,39 @@ class RoomDetailFragment : Fragment(), RoomDetailContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        messageListAdapter = MessageListAdapter {
+            TODO("Not implements")
+        }
+
+        messageListView.also {
+            it.layoutManager = LinearLayoutManager(view.context)
+            it.adapter = messageListAdapter
+            it.setHasFixedSize(true)
+        }
     }
 
     override fun showRoomDetail(room: Room) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        toolbar.title = room.name
     }
 
     override fun showProgress() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun showMessages(messages: List<Message>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        progressBar.visibility = View.VISIBLE
     }
 
     override fun dismissProgress() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        progressBar.visibility = View.GONE
     }
 
     override fun showErrorDialog(throwable: Throwable) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Snackbar.make(rootLayout, "Error!!!!!!", Snackbar.LENGTH_LONG).show()
     }
 
+    override fun showMessages(messages: List<Message>) {
+        messageListAdapter.submitList(messages)
+    }
+
+    override fun showMembers(members: List<Account>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }
