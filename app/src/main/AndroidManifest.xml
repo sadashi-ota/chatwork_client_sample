@@ -11,7 +11,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
-                android:name=".ui.rooms.RoomsActivity"
+                android:name=".ui.room.list.RoomsActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -29,5 +29,7 @@
                       android:scheme="sadashi"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ui.room.detail.RoomDetailActivity"
+                  android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 </manifest>

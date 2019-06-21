@@ -1,4 +1,4 @@
-package com.sadashi.client.chatwork.ui.rooms
+package com.sadashi.client.chatwork.ui.room.list
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil

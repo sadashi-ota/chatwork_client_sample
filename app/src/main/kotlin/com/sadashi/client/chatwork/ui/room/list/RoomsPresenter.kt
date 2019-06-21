@@ -1,5 +1,6 @@
-package com.sadashi.client.chatwork.ui.rooms
+package com.sadashi.client.chatwork.ui.room.list
 
+import com.sadashi.client.chatwork.domain.rooms.Room
 import com.sadashi.client.chatwork.usecase.auth.DeleteAccessTokenUseCase
 import com.sadashi.client.chatwork.usecase.auth.ExistsAccessTokenUseCase
 import com.sadashi.client.chatwork.usecase.rooms.GetRoomsUseCase
@@ -48,6 +49,10 @@ class RoomsPresenter(
         deleteAccessTokenUseCase.execute()
             .subscribe { roomsTransition.moveLoginPage() }
             .addTo(disposables)
+    }
+
+    override fun onClickRoom(room: Room) {
+        roomsTransition.moveRoomDetail(room)
     }
 
     private fun loadRooms() {

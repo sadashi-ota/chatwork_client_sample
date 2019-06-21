@@ -1,4 +1,4 @@
-package com.sadashi.client.chatwork.ui.rooms
+package com.sadashi.client.chatwork.ui.room.list
 
 import android.content.Context
 import android.os.Bundle
@@ -91,8 +91,7 @@ class RoomsFragment : Fragment(), RoomsContract.View {
         }
 
         roomListAdapter = RoomListAdapter {
-            // TODO: Not implements
-            Snackbar.make(rootLayout, "Click ${it.name}.", Snackbar.LENGTH_LONG).show()
+            presenter.onClickRoom(it)
         }
 
         roomListView.also {

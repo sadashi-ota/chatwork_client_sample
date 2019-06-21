@@ -1,4 +1,4 @@
-package com.sadashi.client.chatwork.ui.rooms
+package com.sadashi.client.chatwork.ui.room.list
 
 import com.sadashi.client.chatwork.domain.rooms.Room
 
@@ -8,6 +8,7 @@ interface RoomsContract {
         fun terminate()
         fun onStart()
         fun logout()
+        fun onClickRoom(room: Room)
     }
 
     interface View {

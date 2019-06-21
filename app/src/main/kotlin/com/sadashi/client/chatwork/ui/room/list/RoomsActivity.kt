@@ -1,11 +1,13 @@
-package com.sadashi.client.chatwork.ui.rooms
+package com.sadashi.client.chatwork.ui.room.list
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.sadashi.client.chatwork.R
+import com.sadashi.client.chatwork.domain.rooms.Room
 import com.sadashi.client.chatwork.ui.login.LoginActivity
+import com.sadashi.client.chatwork.ui.room.detail.RoomDetailActivity
 
 class RoomsActivity : AppCompatActivity(), RoomsTransition {
     companion object {
@@ -28,5 +30,9 @@ class RoomsActivity : AppCompatActivity(), RoomsTransition {
 
         startActivity(intent)
         finish()
+    }
+
+    override fun moveRoomDetail(room: Room) {
+        startActivity(RoomDetailActivity.callingIntent(this, room.id))
     }
 }
