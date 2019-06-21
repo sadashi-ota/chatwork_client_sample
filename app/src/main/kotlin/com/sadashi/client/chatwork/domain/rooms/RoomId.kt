@@ -7,6 +7,6 @@ class RoomId(roomId: Int) : Identifier<Int>(roomId) {
         const val INVALID_ID = -1
     }
 
-    fun isValid() = (value == INVALID_ID)
+    fun isValid() = (value != INVALID_ID)
 }
 

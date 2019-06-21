@@ -91,8 +91,7 @@ class RoomsFragment : Fragment(), RoomsContract.View {
         }
 
         roomListAdapter = RoomListAdapter {
-            // TODO: Not implements
-            Snackbar.make(rootLayout, "Click ${it.name}.", Snackbar.LENGTH_LONG).show()
+            presenter.onClickRoom(it)
         }
 
         roomListView.also {

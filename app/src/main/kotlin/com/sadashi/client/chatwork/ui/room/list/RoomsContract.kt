@@ -8,6 +8,7 @@ interface RoomsContract {
         fun terminate()
         fun onStart()
         fun logout()
+        fun onClickRoom(room: Room)
     }
 
     interface View {

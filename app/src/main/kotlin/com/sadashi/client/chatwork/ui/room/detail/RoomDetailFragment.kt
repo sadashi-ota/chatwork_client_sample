@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.sadashi.client.chatwork.R
 import com.sadashi.client.chatwork.di.RoomDetailModuleInjection
@@ -19,8 +20,10 @@ import kotlinx.android.synthetic.main.fragment_room_detail.progressBar
 import kotlinx.android.synthetic.main.fragment_room_detail.rootLayout
 import kotlinx.android.synthetic.main.fragment_room_detail.toolbar
 
+
 class RoomDetailFragment : Fragment(), RoomDetailContract.View {
     companion object {
+        private const val REQUEST_PRELOAD_NUM = 5
         private const val KEY_PARAM_ROOM_ID = "room_id"
 
         fun newInstance(roomId: RoomId): RoomDetailFragment {
@@ -31,6 +34,19 @@ class RoomDetailFragment : Fragment(), RoomDetailContract.View {
             }
         }
     }
+
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager?
+            val lastVisibleItemCount = layoutManager!!.findLastVisibleItemPosition() + 1
+
+            if (0 >= lastVisibleItemCount - REQUEST_PRELOAD_NUM) {
+                presenter.loadNextMessage()
+            }
+        }
+    }
+
 
     lateinit var presenter: RoomDetailContract.Presentation
     private lateinit var messageListAdapter: MessageListAdapter
@@ -61,7 +77,14 @@ class RoomDetailFragment : Fragment(), RoomDetailContract.View {
             it.layoutManager = LinearLayoutManager(view.context)
             it.adapter = messageListAdapter
             it.setHasFixedSize(true)
+            it.addOnScrollListener(scrollListener)
         }
+
+        val arg = arguments ?: let {
+            throw IllegalStateException("argument is null. Please set room id.")
+        }
+
+        presenter.onStart(RoomId(arg.getInt(KEY_PARAM_ROOM_ID)))
     }
 
     override fun showRoomDetail(room: Room) {
@@ -82,6 +105,9 @@ class RoomDetailFragment : Fragment(), RoomDetailContract.View {
 
     override fun showMessages(messages: List<Message>) {
         messageListAdapter.submitList(messages)
+        if (messageListAdapter.itemCount == messages.size) {
+            messageListView.scrollToPosition(messages.size - 1)
+        }
     }
 
     override fun showMembers(members: List<Account>) {

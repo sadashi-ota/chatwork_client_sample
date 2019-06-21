@@ -22,6 +22,7 @@ class RoomDetailPresenter(
     lateinit var roomId: RoomId
 
     private val disposables = CompositeDisposable()
+    private var isLoadingMessages = false
 
     override fun setUp(view: RoomDetailContract.View, roomsTransition: RoomDetailTransition) {
         this.view = view
@@ -38,40 +39,42 @@ class RoomDetailPresenter(
             .subscribe({ messages ->
                 view.showMessages(messages)
                 getRoomUseCase.execute(roomId)
+                    .doOnSubscribe{ view.showProgress() }
                     .observeOn(uiScheduler)
+                    .doAfterTerminate { view.dismissProgress() }
                     .subscribe({ room ->
-                        view.dismissProgress()
                         view.showRoomDetail(room)
                     }, { throwable ->
-                        view.dismissProgress()
                         view.showErrorDialog(throwable)
                     })
             }, {
-                view.dismissProgress()
                 view.showErrorDialog(it)
             })
             .addTo(disposables)
     }
 
     override fun loadFirstMessage() {
+        disposables.isDisposed || let {
+            disposables.dispose()
+            true
+        }
+
         loadMessages(true)
             .subscribe({ messages ->
-                view.dismissProgress()
                 view.showMessages(messages)
             }, {
-                view.dismissProgress()
                 view.showErrorDialog(it)
             })
             .addTo(disposables)
     }
 
     override fun loadNextMessage() {
+        isLoadingMessages && return
+
         loadMessages(false)
             .subscribe({ messages ->
-                view.dismissProgress()
                 view.showMessages(messages)
             }, {
-                view.dismissProgress()
                 view.showErrorDialog(it)
             })
             .addTo(disposables)
@@ -81,18 +84,24 @@ class RoomDetailPresenter(
         getMembersUseCase.execute(roomId)
             .doOnSubscribe { view.showProgress() }
             .observeOn(uiScheduler)
+            .doAfterTerminate { view.dismissProgress() }
             .subscribe({
-                view.dismissProgress()
                 view.showMembers(it)
             }, {
-                view.dismissProgress()
                 view.showErrorDialog(it)
             }).addTo(disposables)
     }
 
     private fun loadMessages(force: Boolean): Single<List<Message>> {
         return getMessagesUseCase.execute(roomId, force)
-            .doOnSubscribe { view.showProgress() }
+            .doOnSubscribe {
+                view.showProgress()
+                isLoadingMessages = true
+            }
             .observeOn(uiScheduler)
+            .doAfterTerminate {
+                view.dismissProgress()
+                isLoadingMessages = false
+            }
     }
 }

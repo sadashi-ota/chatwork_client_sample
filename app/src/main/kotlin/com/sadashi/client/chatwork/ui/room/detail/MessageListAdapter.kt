@@ -32,7 +32,7 @@ class MessageListAdapter(
 }
 
 class MessageViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
-    parent.inflate(R.layout.item_room)
+    parent.inflate(R.layout.item_message)
 ) {
     fun bind(message: Message) {
         itemView.icon.imageUrl(message.account.avatarImageUrl)
