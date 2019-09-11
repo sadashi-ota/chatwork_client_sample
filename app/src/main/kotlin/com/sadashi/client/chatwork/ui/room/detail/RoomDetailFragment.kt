@@ -51,7 +51,7 @@ class RoomDetailFragment : Fragment(), RoomDetailContract.View {
     lateinit var presenter: RoomDetailContract.Presentation
     private lateinit var messageListAdapter: MessageListAdapter
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         val transition = (context as? RoomDetailTransition)
             ?: throw ClassCastException("must cast RoomsTransition")
