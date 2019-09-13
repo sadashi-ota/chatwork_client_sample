@@ -2,16 +2,16 @@ object Deps {
     object Versions {
         const val compileSdk = 28
         const val minSdk = 21
-        const val kotlin = "1.3.40"
-        const val spek = "2.0.5"
-        const val retrofit = "2.6.0"
+        const val kotlin = "1.3.50"
+        const val spek = "2.0.7"
+        const val retrofit = "2.6.1"
         const val moshi = "1.8.0"
     }
 
     object Gradle {
-        const val build = "com.android.tools.build:gradle:3.4.1"
+        const val build = "com.android.tools.build:gradle:3.5.0"
         const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
-        const val androidJunit5 = "de.mannodermaus.gradle.plugins:android-junit5:1.4.2.0"
+        const val androidJunit5 = "de.mannodermaus.gradle.plugins:android-junit5:1.5.1.0"
     }
 
     object Kotlin {
@@ -21,41 +21,42 @@ object Deps {
     }
 
     object AndroidX {
-        const val appcompat = "androidx.appcompat:appcompat:1.0.2"
+        const val appcompat = "androidx.appcompat:appcompat:1.1.0"
         const val constraint = "androidx.constraintlayout:constraintlayout:1.1.3"
-        const val coreKtx = "androidx.core:core-ktx:1.0.2"
+        const val core = "androidx.core:core:1.1.0"
+        const val coreKtx = "androidx.core:core-ktx:1.1.0"
         const val recyclerview = "androidx.recyclerview:recyclerview:1.0.0"
     }
 
     private const val material = "com.google.android.material:material:1.0.0"
 
     object RxJava2 {
-        const val java = "io.reactivex.rxjava2:rxjava:2.2.8"
+        const val java = "io.reactivex.rxjava2:rxjava:2.2.12"
         const val android = "io.reactivex.rxjava2:rxandroid:2.1.1"
-        const val kotlin = "io.reactivex.rxjava2:rxkotlin:2.3.0"
+        const val kotlin = "io.reactivex.rxjava2:rxkotlin:2.4.0"
     }
 
     object Retrofit {
-        const val core = "com.squareup.retrofit2:retrofit:${Deps.Versions.retrofit}"
-        const val converterMoshi = "com.squareup.retrofit2:converter-moshi:${Deps.Versions.retrofit}"
-        const val adapterRxJava = "com.squareup.retrofit2:adapter-rxjava2:${Deps.Versions.retrofit}"
+        const val core = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
+        const val converterMoshi = "com.squareup.retrofit2:converter-moshi:${Versions.retrofit}"
+        const val adapterRxJava = "com.squareup.retrofit2:adapter-rxjava2:${Versions.retrofit}"
     }
 
     object OkHttp {
-        const val logging = "com.squareup.okhttp3:logging-interceptor:3.14.2"
+        const val logging = "com.squareup.okhttp3:logging-interceptor:3.14.3"
     }
 
     object Moshi {
-        const val core = "com.squareup.moshi:moshi:${Deps.Versions.moshi}"
-        const val kotlin = "com.squareup.moshi:moshi-kotlin:${Deps.Versions.moshi}"
+        const val core = "com.squareup.moshi:moshi:${Versions.moshi}"
+        const val kotlin = "com.squareup.moshi:moshi-kotlin:${Versions.moshi}"
     }
 
     private const val picasso = "com.squareup.picasso:picasso:2.71828"
     private const val commonsLang3 = "org.apache.commons:commons-lang3:3.9"
 
     object Spek2 {
-        const val dsl = "org.spekframework.spek2:spek-dsl-jvm:${Deps.Versions.spek}"
-        const val runner = "org.spekframework.spek2:spek-runner-junit5:${Deps.Versions.spek}"
+        const val dsl = "org.spekframework.spek2:spek-dsl-jvm:${Versions.spek}"
+        const val runner = "org.spekframework.spek2:spek-runner-junit5:${Versions.spek}"
     }
 
     private const val mockK = "io.mockk:mockk:1.9.3"
@@ -65,6 +66,7 @@ object Deps {
         Kotlin.reflect,
         AndroidX.appcompat,
         AndroidX.constraint,
+        AndroidX.core,
         AndroidX.coreKtx,
         AndroidX.recyclerview,
         material,

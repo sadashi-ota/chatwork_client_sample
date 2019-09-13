@@ -38,7 +38,7 @@ class RoomsFragment : Fragment(), RoomsContract.View {
         }
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         val transition = (context as? RoomsTransition)
             ?: throw ClassCastException("must cast RoomsTransition")
