@@ -1,6 +1,6 @@
 package com.sadashi.client.chatwork.infra.domain.auth
 
-import com.sadashi.client.chatwork.domain.auth.AuthorizeService
+import com.sadashi.client.chatwork.domain.auth.AuthorizeRepository
 import com.sadashi.client.chatwork.domain.auth.AuthorizedToken
 import com.sadashi.client.chatwork.domain.auth.CodeVerifier
 import com.sadashi.client.chatwork.infra.api.AuthApiClient
@@ -9,11 +9,11 @@ import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.Single
 
-class AuthorizeServiceImpl(
+class AuthorizeRepositoryImpl(
     private val apiClient: AuthApiClient,
     private val localStore: AuthorizedTokenLocalStore,
     private val ioScheduler: Scheduler
-) : AuthorizeService {
+) : AuthorizeRepository {
 
     override fun executeAuthorize(
         code: String,

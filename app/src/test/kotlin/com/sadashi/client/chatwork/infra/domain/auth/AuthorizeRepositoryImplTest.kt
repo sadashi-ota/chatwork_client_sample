@@ -23,20 +23,20 @@ import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.util.Date
 
-internal class AuthorizeServiceImplTest : Spek({
+internal class AuthorizeRepositoryImplTest : Spek({
 
     lateinit var apiClient: AuthApiClient
     lateinit var localStore: AuthorizedTokenLocalStore
     val scheduler: Scheduler = Schedulers.trampoline()
 
-    lateinit var authorizeService: AuthorizeServiceImpl
+    lateinit var authorizeRepository: AuthorizeRepositoryImpl
 
     beforeEachTest {
         mockkObject(AuthorizedTokenConverter)
         apiClient = mockk()
         localStore = mockk()
 
-        authorizeService = AuthorizeServiceImpl(apiClient, localStore, scheduler)
+        authorizeRepository = AuthorizeRepositoryImpl(apiClient, localStore, scheduler)
     }
 
     afterEachTest {
@@ -56,7 +56,7 @@ internal class AuthorizeServiceImplTest : Spek({
                     every { localStore.put(VALID_AUTHORIZED_TOKEN) } returns Completable.complete()
                 }
                 it("calls onComplete") {
-                    authorizeService
+                    authorizeRepository
                         .executeAuthorize(VALID_CODE, CodeVerifier(VALID_CODE_VERIFIER))
                         .test().await()
                         .assertNoErrors()
@@ -77,7 +77,7 @@ internal class AuthorizeServiceImplTest : Spek({
                     } returns Completable.error(Throwable("Dummy error"))
                 }
                 it("calls onError") {
-                    authorizeService.executeAuthorize(VALID_CODE, CodeVerifier(VALID_CODE_VERIFIER))
+                    authorizeRepository.executeAuthorize(VALID_CODE, CodeVerifier(VALID_CODE_VERIFIER))
                         .test().await()
                         .assertError(Throwable::class.java)
                         .assertNotComplete()
@@ -99,7 +99,7 @@ internal class AuthorizeServiceImplTest : Spek({
             }
 
             it("calls onError") {
-                authorizeService
+                authorizeRepository
                     .executeAuthorize("dummy", CodeVerifier("dummy"))
                     .test().await()
                     .assertError(Throwable::class.java)
@@ -118,7 +118,7 @@ internal class AuthorizeServiceImplTest : Spek({
             beforeEach { every { localStore.get() } returns Maybe.just(VALID_AUTHORIZED_TOKEN) }
 
             it("calls onSuccess and value is true") {
-                authorizeService.existsToken().test().await()
+                authorizeRepository.existsToken().test().await()
                     .assertValue(true)
                     .assertComplete()
 
@@ -132,7 +132,7 @@ internal class AuthorizeServiceImplTest : Spek({
             beforeEach { every { localStore.get() } returns Maybe.empty() }
 
             it("calls onSuccess and value is false") {
-                authorizeService.existsToken().test().await()
+                authorizeRepository.existsToken().test().await()
                     .assertValue(false)
                     .assertComplete()
 
@@ -146,7 +146,7 @@ internal class AuthorizeServiceImplTest : Spek({
             beforeEach { every { localStore.get() } returns Maybe.error(Throwable("Dummy error")) }
 
             it("calls onError") {
-                authorizeService.existsToken().test().await()
+                authorizeRepository.existsToken().test().await()
                     .assertError(Throwable::class.java)
                     .assertNotComplete()
 
@@ -173,7 +173,7 @@ internal class AuthorizeServiceImplTest : Spek({
 
                 it("calls onSuccess") {
 
-                    authorizeService.getToken().test().await()
+                    authorizeRepository.getToken().test().await()
                         .assertValue(spyToken)
                         .assertComplete()
 
@@ -205,7 +205,7 @@ internal class AuthorizeServiceImplTest : Spek({
                             every { localStore.put(eq(VALID_AUTHORIZED_TOKEN)) } returns Completable.complete()
                         }
                         it("calls onSuccess") {
-                            authorizeService.getToken().test().await()
+                            authorizeRepository.getToken().test().await()
                                 .assertValue(VALID_AUTHORIZED_TOKEN)
                                 .assertComplete()
 
@@ -226,7 +226,7 @@ internal class AuthorizeServiceImplTest : Spek({
                         }
 
                         it("calls onError") {
-                            authorizeService.getToken().test().await()
+                            authorizeRepository.getToken().test().await()
                                 .assertError(Throwable::class.java)
                                 .assertNotComplete()
 
@@ -249,7 +249,7 @@ internal class AuthorizeServiceImplTest : Spek({
                         } returns Single.error(Throwable("Dummy error"))
                     }
                     it("calls onError") {
-                        authorizeService.getToken().test().await()
+                        authorizeRepository.getToken().test().await()
                             .assertError(Throwable::class.java)
                             .assertNotComplete()
 
@@ -268,7 +268,7 @@ internal class AuthorizeServiceImplTest : Spek({
             beforeEach { every { localStore.get() } returns Maybe.error(Throwable("Dummy error")) }
 
             it("calls onError") {
-                authorizeService.getToken().test().await()
+                authorizeRepository.getToken().test().await()
                     .assertError(Throwable::class.java)
                     .assertNotComplete()
 
@@ -285,7 +285,7 @@ internal class AuthorizeServiceImplTest : Spek({
             beforeEach { every { localStore.delete() } returns Completable.complete() }
 
             it("calls onComplete") {
-                authorizeService.deleteToken().test().await()
+                authorizeRepository.deleteToken().test().await()
                     .assertNoErrors()
                     .assertComplete()
 
@@ -299,7 +299,7 @@ internal class AuthorizeServiceImplTest : Spek({
             beforeEach { every { localStore.delete() } returns Completable.error(Throwable("Dummy error")) }
 
             it("calls onError") {
-                authorizeService.deleteToken().test().await()
+                authorizeRepository.deleteToken().test().await()
                     .assertError(Throwable::class.java)
                     .assertNotComplete()
 

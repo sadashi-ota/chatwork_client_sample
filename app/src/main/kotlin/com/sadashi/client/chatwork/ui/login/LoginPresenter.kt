@@ -4,8 +4,7 @@ import android.net.Uri
 import android.util.Base64
 import com.sadashi.client.chatwork.BuildConfig
 import com.sadashi.client.chatwork.usecase.auth.AuthorizeUseCase
-import com.sadashi.client.chatwork.usecase.auth.DeleteCodeVerifierUseCase
-import com.sadashi.client.chatwork.usecase.auth.StoreCodeVerifierUseCase
+import com.sadashi.client.chatwork.usecase.auth.LoginUseCase
 import com.sadashi.client.chatwork.utility.RandomStringBuilder
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
@@ -13,18 +12,10 @@ import io.reactivex.rxkotlin.addTo
 import java.security.MessageDigest
 
 class LoginPresenter(
+    private val loginUseCase: LoginUseCase,
     private val authorizeUseCase: AuthorizeUseCase,
-    private val storeCodeVerifierUseCase: StoreCodeVerifierUseCase,
-    private val deleteCodeVerifierUseCase: DeleteCodeVerifierUseCase,
     private val uiScheduler: Scheduler
 ) : LoginContract.Presentation {
-
-    companion object {
-        private const val CODE_LENGTH = 64
-        private const val LOGIN_URL = "${BuildConfig.LOGIN_URL}?response_type=code&client_id=${BuildConfig.CLIENT_ID}" +
-                "&redirect_uri=${BuildConfig.AUTH_CALLBACK}&scope=users.all:read rooms.all:read_write" +
-                "&code_challenge_method=S256&code_challenge="
-    }
 
     private lateinit var view: LoginContract.View
     private lateinit var loginTransition: LoginTransition
@@ -40,18 +31,13 @@ class LoginPresenter(
     }
 
     override fun login() {
-        val codeVerifier = RandomStringBuilder.build(CODE_LENGTH)
-        val messageDigest = MessageDigest.getInstance("SHA-256").apply {
-            update(codeVerifier.toByteArray())
-        }
-        val url = LOGIN_URL +
-                Base64.encodeToString(messageDigest.digest(), Base64.NO_PADDING + Base64.URL_SAFE)
-
-        storeCodeVerifierUseCase.execute(codeVerifier)
+        loginUseCase.execute()
             .observeOn(uiScheduler)
-            .subscribe {
+            .subscribe({ url ->
                 loginTransition.moveLoginHtmlPage(url)
-            }
+            }, { throwable ->
+                view.showErrorDialog(throwable)
+            })
             .addTo(disposables)
     }
 
@@ -63,7 +49,6 @@ class LoginPresenter(
                 view.showProgress()
             }
             .observeOn(uiScheduler)
-            .doOnComplete { deleteCodeVerifierUseCase.execute() }
             .subscribe({
                 view.dismissProgress()
                 loginTransition.moveRooms()
