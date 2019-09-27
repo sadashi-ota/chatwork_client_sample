@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_room_detail.toolbar
 
 class RoomDetailFragment : Fragment(), RoomDetailContract.View {
     companion object {
-        private const val REQUEST_PRELOAD_NUM = 5
+        private const val REQUEST_PRELOAD_NUM = 10
         private const val KEY_PARAM_ROOM_ID = "room_id"
 
         fun newInstance(roomId: RoomId): RoomDetailFragment {
@@ -41,7 +41,7 @@ class RoomDetailFragment : Fragment(), RoomDetailContract.View {
             val layoutManager = recyclerView.layoutManager as LinearLayoutManager?
             val lastVisibleItemCount = layoutManager!!.findLastVisibleItemPosition() + 1
 
-            if (0 >= lastVisibleItemCount - REQUEST_PRELOAD_NUM) {
+            if (messageListAdapter.itemCount >= 100 && 0 >= lastVisibleItemCount - REQUEST_PRELOAD_NUM) {
                 presenter.loadNextMessage()
             }
         }
