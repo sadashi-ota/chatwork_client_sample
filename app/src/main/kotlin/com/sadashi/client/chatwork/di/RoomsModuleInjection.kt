@@ -1,7 +1,7 @@
 package com.sadashi.client.chatwork.di
 
 import android.content.Context
-import com.sadashi.client.chatwork.domain.auth.impl.AuthorizeServiceImpl
+import com.sadashi.client.chatwork.domain.auth.AuthorizeRepository
 import com.sadashi.client.chatwork.domain.rooms.RoomRepository
 import com.sadashi.client.chatwork.infra.api.AuthApiClient
 import com.sadashi.client.chatwork.infra.api.RoomApiClient
@@ -26,19 +26,21 @@ class RoomsModuleInjection(
 ) {
     private val authApiClient: AuthApiClient = ApiModule.getAuthApiClient()
 
-    private val authorizedTokenLocalStore: AuthorizedTokenLocalStore
+    private val accessTokenLocalStore: AuthorizedTokenLocalStore
         get() {
             return AuthorizedTokenLocalStoreImpl(AuthorizedTokenPreference(context))
         }
 
-    private val authorizeRepository: AuthorizeRepositoryImpl
+    private val authorizeRepository: AuthorizeRepository
         get() {
-            return AuthorizeRepositoryImpl(authApiClient, authorizedTokenLocalStore, Schedulers.io())
+            return AuthorizeRepositoryImpl(authApiClient, accessTokenLocalStore, Schedulers.io())
         }
 
-    private val roomApiClient: RoomApiClient = ApiModule.getRoomApiClient(authorizedTokenLocalStore)
+    private val roomApiClient: RoomApiClient = ApiModule.getRoomApiClient()
 
-    private val roomRepository: RoomRepository = RoomRepositoryImpl(roomApiClient, Schedulers.io())
+    private val roomRepository: RoomRepository =
+        RoomRepositoryImpl(authorizeRepository, roomApiClient, Schedulers.io())
+
     private val getRoomsUseCase: GetRoomsUseCase = GetRoomsUseCaseImpl(roomRepository)
 
     private val existsAccessTokenUseCase: ExistsAccessTokenUseCase
