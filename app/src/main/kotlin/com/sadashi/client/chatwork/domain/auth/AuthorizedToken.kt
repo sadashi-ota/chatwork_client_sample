@@ -9,5 +9,9 @@ data class AuthorizedToken(
     val tokenType: String,
     val scope: String
 ) {
+    val accessTokenString: String by lazy {
+        "$tokenType ${accessToken.value}"
+    }
+
     fun isExpired(): Boolean = (Date() > expiredTime)
 }
