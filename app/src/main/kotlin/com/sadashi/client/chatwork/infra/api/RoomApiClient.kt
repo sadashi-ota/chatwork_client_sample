@@ -1,7 +1,7 @@
 package com.sadashi.client.chatwork.infra.api
 
 import com.sadashi.client.chatwork.infra.api.json.AccountDetailJson
-import com.sadashi.client.chatwork.infra.api.json.MessageJson
+import com.sadashi.client.chatwork.infra.api.json.MessageResponseJson
 import com.sadashi.client.chatwork.infra.api.json.RoomResponseJson
 import io.reactivex.Single
 import retrofit2.http.GET
@@ -27,7 +27,7 @@ interface RoomApiClient {
         @Header("Authorization") authorization: String,
         @Path("roomId") roomId: Int,
         @Query("force") force: Int
-    ): Single<List<MessageJson>>
+    ): Single<List<MessageResponseJson>>
 
     @GET("v2/rooms/{roomId}/members")
     fun getMembers(
