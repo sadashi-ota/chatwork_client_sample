@@ -2,7 +2,7 @@ package com.sadashi.client.chatwork.infra.api.json
 
 import com.squareup.moshi.Json
 
-data class MessageJson(
+data class MessageResponseJson(
     @Json(name = "account") val account: AccountJson,
     @Json(name = "body") val body: String,
     @Json(name = "message_id") val messageId: String,

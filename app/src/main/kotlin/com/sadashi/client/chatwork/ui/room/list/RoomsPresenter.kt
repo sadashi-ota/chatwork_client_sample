@@ -11,7 +11,7 @@ import io.reactivex.rxkotlin.addTo
 class RoomsPresenter(
     private val existsAccessTokenUseCase: ExistsAccessTokenUseCase,
     private val deleteAccessTokenUseCase: DeleteAccessTokenUseCase,
-    private val getRoomUseCase: GetRoomsUseCase,
+    private val getRoomsUseCase: GetRoomsUseCase,
     private val uiScheduler: Scheduler
 ) : RoomsContract.Presentation {
 
@@ -56,7 +56,7 @@ class RoomsPresenter(
     }
 
     private fun loadRooms() {
-        getRoomUseCase.execute()
+        getRoomsUseCase.execute()
             .doOnSubscribe { view.showProgress() }
             .observeOn(uiScheduler)
             .subscribe({ rooms ->

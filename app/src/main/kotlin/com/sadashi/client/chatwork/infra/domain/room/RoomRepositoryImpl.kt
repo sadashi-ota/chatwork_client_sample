@@ -1,6 +1,6 @@
 package com.sadashi.client.chatwork.infra.domain.room
 
-import com.sadashi.client.chatwork.domain.auth.AccessToken
+import com.sadashi.client.chatwork.domain.auth.AuthorizeRepository
 import com.sadashi.client.chatwork.domain.rooms.Account
 import com.sadashi.client.chatwork.domain.rooms.Message
 import com.sadashi.client.chatwork.domain.rooms.Room
@@ -11,33 +11,57 @@ import io.reactivex.Scheduler
 import io.reactivex.Single
 
 class RoomRepositoryImpl(
+    private val authorizeRepository: AuthorizeRepository,
     private val apiClient: RoomApiClient,
     private val ioScheduler: Scheduler
 ) : RoomRepository {
     override fun getRooms(): Single<List<Room>> {
-        return apiClient.getRooms()
-            .map { RoomConverter.convertToDomainModelFromList(it) }
-            .subscribeOn(ioScheduler)
+        return authorizeRepository.getToken().flatMap { token ->
+            apiClient.getRooms(token.accessTokenString)
+                .map { response ->
+                    RoomConverter.convertToDomainModelFromList(response)
+                }
+        }.subscribeOn(ioScheduler)
     }
 
     override fun getRoom(roomId: RoomId): Single<Room> {
-        return apiClient.getRoom(roomId = roomId.value)
-            .map { RoomConverter.convertToDomainModel(it) }
-            .subscribeOn(ioScheduler)
+        return authorizeRepository.getToken().flatMap { token ->
+            apiClient.getRoom(
+                authorization = token.accessTokenString,
+                roomId = roomId.value
+            ).map { response ->
+                RoomConverter.convertToDomainModel(response)
+            }
+        }.subscribeOn(ioScheduler)
     }
 
     override fun getMessages(roomId: RoomId, force: Boolean): Single<List<Message>> {
-        val forceInt = if (force) { 1 } else { 0 }
+        val forceInt = if (force) {
+            1
+        } else {
+            0
+        }
 
-        return apiClient.getMessages(roomId = roomId.value, force = forceInt)
-            .map { MessageConverter.convertToDomainModelFromList(it) }
-            .subscribeOn(ioScheduler)
+        return authorizeRepository.getToken().flatMap { token ->
+            apiClient.getMessages(
+                authorization = token.accessTokenString,
+                roomId = roomId.value,
+                force = forceInt
+            ).map { response ->
+                MessageConverter.convertToDomainModelFromList(response)
+            }
+        }.subscribeOn(ioScheduler)
     }
 
     override fun getMembers(roomId: RoomId): Single<List<Account>> {
-        return apiClient.getMembers(roomId = roomId.value)
-            .map { AccountConverter.convertToDomainModelFromList(it) }
-            .subscribeOn(ioScheduler)
+        return authorizeRepository.getToken().flatMap { token ->
+            apiClient.getMembers(
+                authorization = token.accessTokenString,
+                roomId = roomId.value
+            ).map { response ->
+                AccountConverter.convertToDomainModelFromList(response)
+            }
+        }.subscribeOn(ioScheduler)
     }
 
 }
