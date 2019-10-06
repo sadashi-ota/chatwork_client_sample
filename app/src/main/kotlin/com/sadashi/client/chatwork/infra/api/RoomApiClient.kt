@@ -1,6 +1,6 @@
 package com.sadashi.client.chatwork.infra.api
 
-import com.sadashi.client.chatwork.infra.api.json.AccountDetailJson
+import com.sadashi.client.chatwork.infra.api.json.AccountDetailResponseJson
 import com.sadashi.client.chatwork.infra.api.json.MessageResponseJson
 import com.sadashi.client.chatwork.infra.api.json.RoomResponseJson
 import io.reactivex.Single
@@ -33,5 +33,5 @@ interface RoomApiClient {
     fun getMembers(
         @Header("Authorization") authorization: String,
         @Path("roomId") roomId: Int
-    ): Single<List<AccountDetailJson>>
+    ): Single<List<AccountDetailResponseJson>>
 }

@@ -2,7 +2,7 @@ package com.sadashi.client.chatwork.infra.domain.room
 
 import com.sadashi.client.chatwork.domain.rooms.Account
 import com.sadashi.client.chatwork.domain.rooms.AccountId
-import com.sadashi.client.chatwork.infra.api.json.AccountDetailJson
+import com.sadashi.client.chatwork.infra.api.json.AccountDetailResponseJson
 import com.sadashi.client.chatwork.infra.api.json.AccountJson
 
 object AccountConverter {
@@ -14,11 +14,11 @@ object AccountConverter {
         )
     }
 
-    fun convertToDomainModelFromList(accountList: List<AccountDetailJson>): List<Account> {
+    fun convertToDomainModelFromList(accountList: List<AccountDetailResponseJson>): List<Account> {
         return accountList.map { convertToDomainModelForDetail(it) }
     }
 
-    private fun convertToDomainModelForDetail(json: AccountDetailJson): Account {
+    private fun convertToDomainModelForDetail(json: AccountDetailResponseJson): Account {
         return Account(
             accountId = AccountId(json.accountId),
             avatarImageUrl = json.avatarImageUrl,

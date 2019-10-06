@@ -2,7 +2,7 @@ package com.sadashi.client.chatwork.infra.api.json
 
 import com.squareup.moshi.Json
 
-data class AccountDetailJson(
+data class AccountDetailResponseJson(
     @Json(name = "account_id") val accountId: Int,
     @Json(name = "avatar_image_url") val avatarImageUrl: String,
     @Json(name = "chatwork_id") val chatworkId: String,

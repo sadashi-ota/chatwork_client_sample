@@ -4,10 +4,12 @@ import com.sadashi.client.chatwork.domain.auth.AccessToken
 import com.sadashi.client.chatwork.domain.auth.AuthorizeRepository
 import com.sadashi.client.chatwork.domain.auth.AuthorizedToken
 import com.sadashi.client.chatwork.domain.auth.RefreshToken
+import com.sadashi.client.chatwork.domain.rooms.Account
 import com.sadashi.client.chatwork.domain.rooms.Message
 import com.sadashi.client.chatwork.domain.rooms.Room
 import com.sadashi.client.chatwork.domain.rooms.RoomId
 import com.sadashi.client.chatwork.infra.api.RoomApiClient
+import com.sadashi.client.chatwork.infra.api.json.AccountDetailResponseJson
 import com.sadashi.client.chatwork.infra.api.json.MessageResponseJson
 import com.sadashi.client.chatwork.infra.api.json.RoomResponseJson
 import io.mockk.every
@@ -43,6 +45,8 @@ internal class RoomRepositoryImplTest : Spek({
     lateinit var room: Room
     lateinit var messageResponseJson: MessageResponseJson
     lateinit var message: Message
+    lateinit var accountDetailResponseJson: AccountDetailResponseJson
+    lateinit var account: Account
 
     beforeEachTest {
         authorizeRepository = mockk()
@@ -127,7 +131,7 @@ internal class RoomRepositoryImplTest : Spek({
                         RoomConverter.convertToDomainModel(eq(roomResponseJson))
                     } returns room
                 }
-                it("Succeed to get room list") {
+                it("Succeed to get room") {
                     roomRepository.getRoom(validRoomId).test().await()
                         .assertValue(room)
                         .assertNoErrors()
@@ -140,7 +144,7 @@ internal class RoomRepositoryImplTest : Spek({
                         apiClient.getRoom(any(), invalidRoomId.value)
                     } returns Single.error(Throwable("Dummy error"))
                 }
-                it("Failed to get room list") {
+                it("Failed to get room") {
                     roomRepository.getRoom(invalidRoomId).test().await()
                         .assertNoValues()
                         .assertError(Throwable::class.java)
@@ -154,7 +158,7 @@ internal class RoomRepositoryImplTest : Spek({
                     authorizeRepository.getToken()
                 } returns Single.error(Throwable("Dummy error"))
             }
-            it("Failed to get room list") {
+            it("Failed to get room") {
                 roomRepository.getRoom(validRoomId).test().await()
                     .assertNoValues()
                     .assertError(Throwable::class.java)
@@ -190,7 +194,7 @@ internal class RoomRepositoryImplTest : Spek({
                             )
                         } returns Single.just(listOf(messageResponseJson))
                     }
-                    it("Succeed to get room list") {
+                    it("Succeed to get message list") {
                         roomRepository.getMessages(validRoomId, true).test().await()
                             .assertValue(listOf(message))
                             .assertNoErrors()
@@ -207,7 +211,7 @@ internal class RoomRepositoryImplTest : Spek({
                             )
                         } returns Single.just(listOf(messageResponseJson))
                     }
-                    it("Succeed to get room list") {
+                    it("Succeed to get message list") {
                         roomRepository.getMessages(validRoomId, false).test().await()
                             .assertValue(listOf(message))
                             .assertNoErrors()
@@ -221,7 +225,7 @@ internal class RoomRepositoryImplTest : Spek({
                         apiClient.getMessages(any(), invalidRoomId.value, 1)
                     } returns Single.error(Throwable("Dummy error"))
                 }
-                it("Failed to get room list") {
+                it("Failed to get message list") {
                     roomRepository.getMessages(invalidRoomId, true).test().await()
                         .assertNoValues()
                         .assertError(Throwable::class.java)
@@ -235,8 +239,69 @@ internal class RoomRepositoryImplTest : Spek({
                     authorizeRepository.getToken()
                 } returns Single.error(Throwable("Dummy error"))
             }
-            it("Failed to get room list") {
+            it("Failed to get message list") {
                 roomRepository.getMessages(validRoomId, true).test().await()
+                    .assertNoValues()
+                    .assertError(Throwable::class.java)
+                    .assertNotComplete()
+            }
+        }
+    }
+
+    describe("#getMembers") {
+        beforeEach { mockkObject(AccountConverter) }
+        afterEach { unmockkObject(AccountConverter) }
+
+        context("When getToken() is succeed") {
+            beforeEach {
+                every { authorizeRepository.getToken() } returns Single.just(authorizedToken)
+            }
+            context("When api is succeed") {
+                beforeEach {
+                    account = mockk()
+                    accountDetailResponseJson = mockk()
+
+                    every {
+                        apiClient.getMembers(
+                            eq(authorizedToken.accessTokenString),
+                            validRoomId.value
+                        )
+                    } returns Single.just(listOf(accountDetailResponseJson))
+                    every {
+                        AccountConverter.convertToDomainModelFromList(
+                            eq(listOf(accountDetailResponseJson))
+                        )
+                    } returns listOf(account)
+                }
+                it("Succeed to get account list") {
+                    roomRepository.getMembers(validRoomId).test().await()
+                        .assertValue(listOf(account))
+                        .assertNoErrors()
+                        .assertComplete()
+                }
+            }
+            context("When api is failed") {
+                beforeEach {
+                    every {
+                        apiClient.getMembers(any(), invalidRoomId.value)
+                    } returns Single.error(Throwable("Dummy error"))
+                }
+                it("Failed to get account list") {
+                    roomRepository.getMembers(invalidRoomId).test().await()
+                        .assertNoValues()
+                        .assertError(Throwable::class.java)
+                        .assertNotComplete()
+                }
+            }
+        }
+        context("When getToken() is failed") {
+            beforeEach {
+                every {
+                    authorizeRepository.getToken()
+                } returns Single.error(Throwable("Dummy error"))
+            }
+            it("Failed to get account list") {
+                roomRepository.getMembers(validRoomId).test().await()
                     .assertNoValues()
                     .assertError(Throwable::class.java)
                     .assertNotComplete()
